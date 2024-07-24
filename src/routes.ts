@@ -13,6 +13,7 @@
 import { HomePage } from "./page/home";
 import { RouteDispatcher } from "@sygnal/sse";
 import { Site } from "./site";
+import { QuizPage } from "./page/quiz";
 
 export const routeDispatcher = (): RouteDispatcher => {
     
@@ -21,6 +22,7 @@ export const routeDispatcher = (): RouteDispatcher => {
 
         // Site paes
         '/': HomePage,
+        '/quiz': QuizPage, 
 
         // TEST Pages
 
