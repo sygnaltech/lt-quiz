@@ -22,7 +22,7 @@
   };
 
   // src/version.ts
-  var VERSION = "0.1.1";
+  var VERSION = "0.1.3";
 
   // src/page/home.ts
   var HomePage = class {
@@ -360,6 +360,50 @@
     exec() {
       this.fetchIPInfo();
       this.setupEventListeners();
+      const sa5 = window["sa5"];
+      sa5.push([
+        "slideNextRequest",
+        (slider, index) => {
+          console.log("SLIDE NEXT REQUEST", slider.name, slider, index);
+          const slide = this.getSlideByPosition(index + 1);
+          if (slide) {
+            console.log("Slide found:", slide);
+            return this.checkRadioSelection(slide);
+          } else {
+            console.log("Slide not found.");
+          }
+          return index < 6;
+        }
+      ]);
+      sa5.push([
+        "slidePrevRequest",
+        (slider, index) => {
+          console.log("SLIDE PREV REQUEST", slider.name, slider, index);
+          return index > 0;
+        }
+      ]);
+    }
+    checkRadioSelection(container) {
+      const radios = container.querySelectorAll('input[type="radio"]');
+      for (let i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+          return true;
+        }
+      }
+      return false;
+    }
+    getSlideByPosition(position) {
+      const slider = document.querySelector(`[wfu-slider=quiz]`);
+      if (!slider) {
+        console.error("Slider not found.");
+        return null;
+      }
+      const slides = slider.querySelectorAll(`.w-slide`);
+      if (position < 1 || position > slides.length) {
+        console.error("Slide position out of range.");
+        return null;
+      }
+      return slides[position - 1];
     }
     fetchIPInfo() {
       return __async(this, null, function* () {
@@ -379,7 +423,7 @@
       elements.forEach((element) => {
         const propertyName = element.getAttribute("ip-info");
         if (propertyName && data.hasOwnProperty(propertyName)) {
-          element.textContent = data[propertyName];
+          this.setElemData(element, data[propertyName]);
         } else {
           console.log(`Property '${propertyName}' not found in data`);
         }
@@ -401,6 +445,39 @@
       const scoreDisplay = document.getElementById("scoreDisplay");
       if (scoreDisplay) {
         scoreDisplay.textContent = `Total Score: ${totalScore}`;
+      }
+      const dataElems = document.querySelectorAll("[data-item]");
+      dataElems.forEach((elem) => {
+        switch (elem.getAttribute("data-item")) {
+          case "score":
+            this.setElemData(elem, totalScore.toString());
+            break;
+          case "percentage":
+            const percentage = this.getPercentage(totalScore);
+            if (percentage) {
+              this.setElemData(elem, percentage.toString());
+            }
+            break;
+        }
+      });
+    }
+    getPercentage(index) {
+      const dataPoints = [0, 4.12, 6.1, 8.95, 12.95, 18.39, 25.42, 33.99, 43.76, 54.21, 64.25, 73.2, 80.57, 86.26, 90.44, 93.39];
+      if (index < 0 || index >= dataPoints.length) {
+        console.error("Index out of range. Please provide an index between 0 and 15.");
+        return null;
+      }
+      return dataPoints[index];
+    }
+    setElemData(elem, value) {
+      switch (elem.tagName.toLowerCase()) {
+        case "input":
+          const inputElem = elem;
+          inputElem.value = value;
+          break;
+        default:
+          elem.innerText = value;
+          break;
       }
     }
   };
