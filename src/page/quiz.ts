@@ -19,7 +19,8 @@ export class QuizPage implements IRouteHandler {
   exec() {
 
     this.fetchIPInfo();
-this.setupEventListeners(); 
+    this.setupEventListeners();  
+    
     // const ipinfoWrapper = new IPinfoWrapper("37cce46c605631"); // Sygnal's HACK
 
     // ipinfoWrapper.lookupIp("1.1.1.1").then((response: IPinfo) => {
