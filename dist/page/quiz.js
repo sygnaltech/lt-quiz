@@ -21,15 +21,81 @@
     });
   };
 
+  // src/sa5/layout.ts
+  var ElementGroupController = class {
+    constructor() {
+      this.groups = /* @__PURE__ */ new Map();
+    }
+    init() {
+      const elements = document.querySelectorAll("[wfu-element-group]");
+      elements.forEach((element) => {
+        var _a;
+        const groupName = element.getAttribute("wfu-element-group");
+        if (groupName) {
+          if (!this.groups.has(groupName)) {
+            const group = new ElementGroup(groupName);
+            this.groups.set(groupName, group);
+          }
+          (_a = this.groups.get(groupName)) == null ? void 0 : _a.addElement(element);
+        }
+      });
+    }
+  };
+  var ElementGroup = class {
+    constructor(name) {
+      this.name = name;
+      this.elements = [];
+    }
+    addElement(element) {
+      const elementGroupElement = new ElementGroupElement(element);
+      this.elements.push(elementGroupElement);
+    }
+    init() {
+    }
+    hideAll() {
+      this.elements.forEach((element) => element.hide());
+    }
+    showAll() {
+      this.elements.forEach((element) => element.show());
+    }
+    show(name) {
+      this.elements.forEach((element) => {
+        if (element.element.getAttribute("wfu-element-name") === name) {
+          element.show();
+        } else {
+          element.hide();
+        }
+      });
+    }
+  };
+  var ElementGroupElement = class {
+    constructor(element) {
+      this.element = element;
+    }
+    hide() {
+      this.element.style.display = "none";
+    }
+    show() {
+      this.element.style.display = "block";
+    }
+    init() {
+    }
+  };
+
   // src/page/quiz.ts
   var QuizPage = class {
     constructor() {
+      this.elementGroupController = new ElementGroupController();
     }
     setup() {
     }
     exec() {
+      var _a, _b;
       this.fetchIPInfo();
       this.setupEventListeners();
+      this.elementGroupController.init();
+      (_a = this.elementGroupController.groups.get("result-text")) == null ? void 0 : _a.show("low");
+      (_b = this.elementGroupController.groups.get("result-chart")) == null ? void 0 : _b.show("1");
       const sa5 = window["sa5"];
       sa5.push([
         "slideNextRequest",
@@ -52,6 +118,28 @@
           return index > 0;
         }
       ]);
+      const elements = document.querySelectorAll("[quiz-action]");
+      elements.forEach((element) => {
+        const actionValue = element.getAttribute("quiz-action");
+        if (actionValue) {
+          element.addEventListener("click", () => {
+            this.actionFunction(actionValue);
+          });
+        }
+      });
+    }
+    actionFunction(actionValue) {
+      console.log(`Action triggered with value: ${actionValue}`);
+      switch (actionValue) {
+        case "back":
+          break;
+        case "next":
+          break;
+        case "close":
+          break;
+        case "restart":
+          break;
+      }
     }
     checkRadioSelection(container) {
       const radios = container.querySelectorAll('input[type="radio"]');
@@ -106,6 +194,7 @@
       });
     }
     calculateTotalScore() {
+      var _a, _b;
       const checkedRadios = document.querySelectorAll('input[type="radio"]:checked');
       let totalScore = 0;
       console.log("clicked");
@@ -123,21 +212,39 @@
             this.setElemData(elem, totalScore.toString());
             break;
           case "percentage":
-            const percentage = this.getPercentage(totalScore);
-            if (percentage) {
-              this.setElemData(elem, percentage.toString());
+          case "probability":
+            const probability = this.getProbability(totalScore);
+            if (probability) {
+              this.setElemData(elem, probability.toString());
             }
             break;
+          case "probability-display":
+            const percentage = (this.getProbability(totalScore) * 100).toFixed(2);
+            if (percentage) {
+              this.setElemData(elem, `${percentage}%`);
+            }
         }
       });
+      (_a = this.elementGroupController.groups.get("result-chart")) == null ? void 0 : _a.show(totalScore.toString());
+      (_b = this.elementGroupController.groups.get("result-text")) == null ? void 0 : _b.show(this.getScoreCategory(totalScore));
     }
-    getPercentage(index) {
+    getScoreCategory(totalScore) {
+      if (totalScore >= 0 && totalScore <= 2) {
+        return "low";
+      } else if (totalScore >= 3 && totalScore <= 7) {
+        return "moderate";
+      } else if (totalScore >= 8) {
+        return "high";
+      }
+      return "unknown";
+    }
+    getProbability(index) {
       const dataPoints = [0, 4.12, 6.1, 8.95, 12.95, 18.39, 25.42, 33.99, 43.76, 54.21, 64.25, 73.2, 80.57, 86.26, 90.44, 93.39];
       if (index < 0 || index >= dataPoints.length) {
         console.error("Index out of range. Please provide an index between 0 and 15.");
         return null;
       }
-      return dataPoints[index];
+      return dataPoints[index] / 100;
     }
     setElemData(elem, value) {
       switch (elem.tagName.toLowerCase()) {

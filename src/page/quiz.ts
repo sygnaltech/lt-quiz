@@ -7,12 +7,16 @@
 
 
 import { IRouteHandler } from "@sygnal/sse";
+import { ElementGroupController } from "../sa5/layout";
 
 
 
 export class QuizPage implements IRouteHandler {
 
+  elementGroupController: ElementGroupController;
+
   constructor() {
+    this.elementGroupController = new ElementGroupController(); 
   }
 
   setup() {
@@ -24,6 +28,10 @@ export class QuizPage implements IRouteHandler {
     this.fetchIPInfo();
     this.setupEventListeners();  
     
+    this.elementGroupController.init(); 
+    this.elementGroupController.groups.get("result-text")?.show("low"); 
+    this.elementGroupController.groups.get("result-chart")?.show("1"); 
+
     // const ipinfoWrapper = new IPinfoWrapper("37cce46c605631"); // Sygnal's HACK
 
     // ipinfoWrapper.lookupIp("1.1.1.1").then((response: IPinfo) => {
@@ -56,8 +64,49 @@ export class QuizPage implements IRouteHandler {
         return (index > 0); 
         }]); 
 
+        /**
+         * Install Quiz actions
+         */
+
+    // Select all elements with the custom attribute 'quiz-action'
+    const elements = document.querySelectorAll('[quiz-action]');
+
+    // Iterate over each element
+    elements.forEach(element => {
+        // Get the value of the 'quiz-action' attribute
+        const actionValue = element.getAttribute('quiz-action');
+
+        if (actionValue) {
+            // Install a click handler on the element
+            element.addEventListener('click', () => {
+                // Call the action function with the value of the 'quiz-action' attribute
+                this.actionFunction(actionValue);
+            });
+        }
+    });
+
+
 
   }
+
+
+  actionFunction(actionValue: string) {
+    console.log(`Action triggered with value: ${actionValue}`);
+    // Add your custom action logic here
+
+    switch(actionValue) {
+      case "back":
+        break;
+      case "next":
+        break;
+      case "close":
+        break;
+      case "restart":
+        break;
+    }
+
+  }
+
 
   checkRadioSelection(container: HTMLElement): boolean {
     // Find all radio input elements within the given container
@@ -172,15 +221,26 @@ applyIPInfoData(data: any) {
         case "score":
           this.setElemData(elem, totalScore.toString());
           break;
-        case "percentage": 
-          const percentage: number | null = this.getPercentage(totalScore); 
-          if (percentage) {
-            this.setElemData(elem, percentage.toString()); 
+        case "percentage": case "probability":
+          const probability: number | null = this.getProbability(totalScore); 
+          if (probability) {
+            this.setElemData(elem, probability.toString()); 
           }
           break;
-      }
+        case "probability-display":
+          const percentage: string | null = (this.getProbability(totalScore)! * 100).toFixed(2);
+          if (percentage) {
+            this.setElemData(elem, `${percentage}%`); 
+          }
+        }
 
     });
+
+    this.elementGroupController.groups.get("result-chart")?.show(totalScore.toString()); 
+
+
+    this.elementGroupController.groups.get("result-text")?.show(this.getScoreCategory(totalScore)); 
+
 
 
     // const scoreElems: NodeListOf<HTMLElement> = document.querySelectorAll('[data-item="percentage"]');
@@ -197,7 +257,18 @@ applyIPInfoData(data: any) {
 
   }
 
-  private getPercentage(index: number): number | null {
+  getScoreCategory(totalScore: number): string {
+    if (totalScore >= 0 && totalScore <= 2) {
+        return "low";
+    } else if (totalScore >= 3 && totalScore <= 7) {
+        return "moderate";
+    } else if (totalScore >= 8) {
+        return "high";
+    }
+    return "unknown";
+  }
+
+  private getProbability(index: number): number | null {
     const dataPoints: number[] = [0, 4.12, 6.10, 8.95, 12.95, 18.39, 25.42, 33.99, 43.76, 54.21, 64.25, 73.20, 80.57, 86.26, 90.44, 93.39];
 
     // Check if the provided index is within the valid range
@@ -206,7 +277,7 @@ applyIPInfoData(data: any) {
         return null; // Return null or throw an error if the index is out of range
     }
 
-    return dataPoints[index]; // Return the percentage value at the specified index
+    return dataPoints[index] / 100.0; // Return the percentage value at the specified index
   }
 
 
