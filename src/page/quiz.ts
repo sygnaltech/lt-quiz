@@ -57,7 +57,7 @@ console.log("x", sa5);
         case "probability-display":
           const percentage: string | null = this.data["probability-display"];
           if (percentage) {
-            this.setElemData(elem, `${percentage}%`); 
+            this.setElemData(elem, percentage); 
           }
           break;
         case "first-name":
