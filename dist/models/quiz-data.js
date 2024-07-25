@@ -19,6 +19,20 @@
         return "";
       return `${(this.probability * 100).toFixed(2)}%`;
     }
+    setProperty(property, value) {
+      this[property] = value;
+    }
+    static createWatchedObject(callback) {
+      const data = new QuizData();
+      const handler = {
+        set: (target, property, value) => {
+          target[property] = value;
+          callback(target, property, value);
+          return true;
+        }
+      };
+      return new Proxy(data, handler);
+    }
   };
 })();
 //# sourceMappingURL=quiz-data.js.map

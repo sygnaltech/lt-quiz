@@ -420,6 +420,20 @@
         return "";
       return `${(this.probability * 100).toFixed(2)}%`;
     }
+    setProperty(property, value) {
+      this[property] = value;
+    }
+    static createWatchedObject(callback) {
+      const data = new QuizData();
+      const handler = {
+        set: (target, property, value) => {
+          target[property] = value;
+          callback(target, property, value);
+          return true;
+        }
+      };
+      return new Proxy(data, handler);
+    }
   };
 
   // src/ipinfo.ts
@@ -467,19 +481,10 @@
   var QuizPage = class {
     constructor() {
       this.elementGroupController = new ElementGroupController();
-      this.data = new QuizData();
-      this.data = this.createWatchedObject(this.data);
-    }
-    createWatchedObject(data) {
-      const handler = {
-        set: (target, property, value) => {
-          console.log(`Property ${String(property)} changed from ${target[property]} to ${value}`);
-          target[property] = value;
-          this.updateData();
-          return true;
-        }
-      };
-      return new Proxy(data, handler);
+      this.data = QuizData.createWatchedObject((target, property, value) => {
+        console.log(`Property ${String(property)} changed to ${value}`);
+        this.updateData();
+      });
     }
     updateData() {
       var _a, _b;
@@ -551,14 +556,27 @@
         }
       });
       const dataItemSources = document.querySelectorAll("[data-item-source]");
-      dataItemSources.forEach((element) => {
-        const actionValue = element.getAttribute("data-item-source");
+      dataItemSources.forEach((elem) => {
+        const actionValue = elem.getAttribute("data-item-source");
         if (actionValue) {
-          element.addEventListener("changed", () => {
-            this.actionFunction(actionValue);
-          });
+          switch (elem.tagName.toLowerCase()) {
+            case "input":
+              const inputElem = elem;
+              elem.addEventListener("input", () => {
+                const av = actionValue;
+                if (av in this.data)
+                  this.updateProperty(av, inputElem.value);
+              });
+              break;
+            default:
+              console.error("data-item-source is only supported on input elements.");
+              break;
+          }
         }
       });
+    }
+    updateProperty(property, value) {
+      this.data.setProperty(property, value);
     }
     actionFunction(actionValue) {
       console.log(`Action triggered with value: ${actionValue}`);

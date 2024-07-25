@@ -27,7 +27,29 @@ export class QuizData {
   
     constructor() {
     }
-  
+
+    // setProperty<K extends keyof QuizData>(property: K, value: QuizData[K]): void {
+    //     this[property] = value;
+    // }
+    setProperty<K extends keyof this>(property: K, value: this[K]): void {
+        this[property] = value;
+    }
+    
+    static createWatchedObject(callback: (target: QuizData, property: keyof QuizData, value: any) => void): QuizData {
+        const data = new QuizData(); 
+
+        const handler: ProxyHandler<QuizData> = {
+            set: (target, property: keyof QuizData, value: any) => {
+//                target[property] = value;  // Set the property value
+                (target[property] as any) = value;
+                callback(target, property, value);  // Call the callback function
+                return true;
+            }
+        };
+
+        return new Proxy(data, handler);
+    }
+
   }
 
   

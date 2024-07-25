@@ -22,22 +22,13 @@ export class QuizPage implements IRouteHandler {
     this.elementGroupController = new ElementGroupController(); 
 
     // Create a reactive data object for page updates 
-    this.data = new QuizData();
-    this.data = this.createWatchedObject(this.data);
+    this.data = QuizData.createWatchedObject((target, property, value) => {
+      console.log(`Property ${String(property)} changed to ${value}`);
+      this.updateData();
+    });
+
   }
 
-  createWatchedObject(data: QuizData): QuizData {
-    const handler: ProxyHandler<QuizData> = {
-      set: (target, property: keyof QuizData, value: any) => {
-        console.log(`Property ${String(property)} changed from ${target[property]} to ${value}`);
-        (target[property] as any) = value;
-        this.updateData();
-        return true;
-      }
-    };
-
-    return new Proxy(data, handler);
-  }
 
   // Update all [data-item] tagged elements
   // supports text elements and form input elements 
@@ -52,7 +43,7 @@ export class QuizPage implements IRouteHandler {
           this.setElemData(elem, this.data.score.toString());
           break;
         case "percentage": case "probability":
-          const probability: number | null = this.data.probability; // this.getProbability(totalScore); 
+          const probability: number | null = this.data.probability;
           if (probability) {
               this.setElemData(elem, probability.toString()); 
           }
@@ -70,7 +61,6 @@ export class QuizPage implements IRouteHandler {
     });
 
     this.elementGroupController.groups.get("result-chart")?.show(this.data.score.toString()); 
-
     this.elementGroupController.groups.get("result-text")?.show(this.getScoreCategory(this.data.score)); 
 
   }
@@ -108,17 +98,16 @@ export class QuizPage implements IRouteHandler {
         }
 
         return (index < 6); 
-//        return false;
-        }]); 
+      }]); 
     sa5.push(['slidePrevRequest', 
       (slider: any, index: any) => {
         console.log("SLIDE PREV REQUEST", slider.name, slider, index); 
         return (index > 0); 
-        }]); 
+      }]); 
 
-        /**
-         * Install Quiz actions
-         */
+    /**
+     * Install Quiz actions
+     */
 
     // Select all elements with the custom attribute 'quiz-action'
     const elements = document.querySelectorAll('[quiz-action]');
@@ -138,29 +127,51 @@ export class QuizPage implements IRouteHandler {
     });
 
 
-        /**
-         * Install Quiz actions
-         */
+    /**
+     * Install Data item source monitors
+     */
 
     // Select all elements with the custom attribute 'quiz-action'
     const dataItemSources = document.querySelectorAll('[data-item-source]');
 
     // Iterate over each element
-    dataItemSources.forEach(element => {
+    dataItemSources.forEach(elem => {
         // Get the value of the 'quiz-action' attribute
-        const actionValue = element.getAttribute('data-item-source');
-
+        const actionValue = elem.getAttribute('data-item-source');
         if (actionValue) {
-            // Install a click handler on the element
-            element.addEventListener('changed', () => {
-                // Call the action function with the value of the 'quiz-action' attribute
-                this.actionFunction(actionValue);
-            });
+
+          switch(elem.tagName.toLowerCase()) {
+            case "input":
+      
+              const inputElem: HTMLInputElement = elem as HTMLInputElement; 
+
+              // Install an input-changed handler on the element
+              elem.addEventListener('input', () => {
+
+                // Update our reactive quiz data object if a matching property exists
+                const av: keyof QuizData = actionValue as keyof QuizData; 
+                if(av in this.data)
+                  this.updateProperty(av, inputElem.value); 
+
+              });            
+      
+              break;
+            default: 
+ 
+              console.error ("data-item-source is only supported on input elements.")
+      
+              break;
+          }
+
+
         }
     });
 
   }
 
+  updateProperty<K extends keyof QuizData>(property: K, value: QuizData[K]) {
+    this.data.setProperty(property, value);
+}
 
   actionFunction(actionValue: string) {
     console.log(`Action triggered with value: ${actionValue}`);
