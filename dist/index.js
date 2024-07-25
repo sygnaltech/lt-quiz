@@ -492,12 +492,14 @@
   var QuizPage = class {
     constructor() {
       this.elementGroupController = new ElementGroupController();
-      this.data = QuizData.createWatchedObject((target, property, value) => {
+      this.data = QuizData.createWatchedObject((data, property, value) => {
         console.log(`Property ${String(property)} changed to ${value}`);
-        this.updateData();
+        this.updateDisplayData();
       });
+      console.log("init quizpage");
+      console.log("x", sa5);
     }
-    updateData() {
+    updateDisplayData() {
       var _a, _b;
       console.log("Current data:", this.data);
       const dataElems = document.querySelectorAll("[data-item]");
@@ -530,13 +532,17 @@
     }
     exec() {
       var _a, _b;
+      const sa52 = window["sa5"];
       new IPInfo().init();
+      const sliderElem = document.querySelector("[wfu-slider='quiz']");
+      console.log("slider", sliderElem);
+      if (sliderElem)
+        this.slider = new sa52.WebflowSlider(sliderElem);
       this.setupEventListeners();
       this.elementGroupController.init();
       (_a = this.elementGroupController.groups.get("result-text")) == null ? void 0 : _a.show("low");
       (_b = this.elementGroupController.groups.get("result-chart")) == null ? void 0 : _b.show("1");
-      const sa5 = window["sa5"];
-      sa5.push([
+      sa52.push([
         "slideNextRequest",
         (slider, index) => {
           console.log("SLIDE NEXT REQUEST", slider.name, slider, index);
@@ -550,7 +556,7 @@
           return index < 6;
         }
       ]);
-      sa5.push([
+      sa52.push([
         "slidePrevRequest",
         (slider, index) => {
           console.log("SLIDE PREV REQUEST", slider.name, slider, index);
@@ -597,10 +603,19 @@
         case "next":
           break;
         case "close":
+          this.resetQuiz();
           break;
         case "restart":
+          this.resetQuiz();
           break;
       }
+    }
+    resetQuiz() {
+      const radios = document.querySelectorAll('input[type="radio"]');
+      for (let i = 0; i < radios.length; i++) {
+        radios[i].checked = false;
+      }
+      this.slider.currentIndex = 0;
     }
     checkRadioSelection(container) {
       const radios = container.querySelectorAll('input[type="radio"]');

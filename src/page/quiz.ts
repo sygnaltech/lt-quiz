@@ -17,22 +17,28 @@ export class QuizPage implements IRouteHandler {
 
   elementGroupController: ElementGroupController;
   data: QuizData;  
+  slider: any;
 
   constructor() {
     this.elementGroupController = new ElementGroupController(); 
 
     // Create a reactive data object for page updates 
-    this.data = QuizData.createWatchedObject((target, property, value) => {
+    this.data = QuizData.createWatchedObject((data, property, value) => {
       console.log(`Property ${String(property)} changed to ${value}`);
-      this.updateData();
+      this.updateDisplayData();
     });
+
+console.log("init quizpage"); 
+
+console.log("x", sa5); 
+
 
   }
 
 
   // Update all [data-item] tagged elements
   // supports text elements and form input elements 
-  updateData() {
+  updateDisplayData() {
     console.log('Current data:', this.data);
 
     const dataElems: NodeListOf<HTMLElement> = document.querySelectorAll('[data-item]');
@@ -72,7 +78,17 @@ export class QuizPage implements IRouteHandler {
 
   exec() {
 
+    const sa5: any = window['sa5' as any];
+
     (new IPInfo()).init();
+
+
+    // Load the slider 
+//    window["sa5" as any] = window["sa5" as any] || {}; 
+const sliderElem: HTMLElement | null = document.querySelector<HTMLElement>("[wfu-slider='quiz']"); 
+console.log("slider", sliderElem)
+if(sliderElem)
+  this.slider = new sa5.WebflowSlider(sliderElem);
 
     this.setupEventListeners();  
     
@@ -80,7 +96,6 @@ export class QuizPage implements IRouteHandler {
     this.elementGroupController.groups.get("result-text")?.show("low"); 
     this.elementGroupController.groups.get("result-chart")?.show("1"); 
 
-    const sa5: any = window['sa5' as any];
     sa5.push(['slideNextRequest', 
       (slider: any, index: any) => {
         console.log("SLIDE NEXT REQUEST", slider.name, slider, index); 
@@ -169,9 +184,11 @@ export class QuizPage implements IRouteHandler {
 
   }
 
+  // For updating quiz data properties
+  // using a string name 
   updateProperty<K extends keyof QuizData>(property: K, value: QuizData[K]) {
     this.data.setProperty(property, value);
-}
+  }
 
   actionFunction(actionValue: string) {
     console.log(`Action triggered with value: ${actionValue}`);
@@ -183,13 +200,34 @@ export class QuizPage implements IRouteHandler {
       case "next":
         break;
       case "close":
+        this.resetQuiz();
+
         break;
       case "restart":
+        this.resetQuiz();
+
         break;
     }
 
   }
 
+  resetQuiz() {
+    const radios = document.querySelectorAll<HTMLInputElement>('input[type="radio"]');
+
+    // Clear all radio buttons
+    for (let i = 0; i < radios.length; i++) {
+        radios[i].checked = false;
+    }
+
+    // Change slide to position 1
+    this.slider.currentIndex = 0;
+
+    // Hide form
+    // but do not clear
+
+    // Hide quiz results
+
+  }
 
   checkRadioSelection(container: HTMLElement): boolean {
     // Find all radio input elements within the given container
@@ -203,9 +241,7 @@ export class QuizPage implements IRouteHandler {
     }
 
     return false; // Return false if no radios are selected
-}
-
-
+  }
 
   getSlideByPosition(position: number): HTMLElement | null {
     // Locate the element with the custom attribute wfu-slider="quiz"
@@ -227,9 +263,7 @@ export class QuizPage implements IRouteHandler {
 
     // Return the specified slide, adjusting for zero-based index
     return slides[position - 1] as HTMLElement;
-}
-
-
+  }
 
   private setupEventListeners(): void {
     // Get all radio input elements
@@ -259,50 +293,7 @@ export class QuizPage implements IRouteHandler {
         scoreDisplay.textContent = `Total Score: ${totalScore}`;
     }
 
-
     this.data.score = totalScore;
-//    this.data.probability = this.getProbability(totalScore);
-
-    // const dataElems: NodeListOf<HTMLElement> = document.querySelectorAll('[data-item]');
-    // dataElems.forEach(elem => {
-
-    //   switch(elem.getAttribute("data-item")) {
-    //     case "score":
-    //       this.setElemData(elem, totalScore.toString());
-    //       break;
-    //     case "percentage": case "probability":
-    //       const probability: number | null = this.getProbability(totalScore); 
-    //       if (probability) {
-    //         this.setElemData(elem, probability.toString()); 
-    //       }
-    //       break;
-    //     case "probability-display":
-    //       const percentage: string | null = (this.getProbability(totalScore)! * 100).toFixed(2);
-    //       if (percentage) {
-    //         this.setElemData(elem, `${percentage}%`); 
-    //       }
-    //     }
-
-    // });
-
-    // this.elementGroupController.groups.get("result-chart")?.show(totalScore.toString()); 
-
-
-    // this.elementGroupController.groups.get("result-text")?.show(this.getScoreCategory(totalScore)); 
-
-
-
-    // const scoreElems: NodeListOf<HTMLElement> = document.querySelectorAll('[data-item="percentage"]');
-    // scoreElems.forEach(elem => {
-    //   elem.innerText = totalScore.toString(); 
-    // });
-
-
-      // // Set score hidden inputin quiz form
-      // const formInputScore: HTMLInputElement = document.querySelectorAll<HTMLInputElement>('input[name="Score"]')[0];
-      // if (formInputScore) {
-      //     formInputScore.value = totalScore.toString();
-      // }
 
   }
 
