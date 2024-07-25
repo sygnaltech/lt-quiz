@@ -29,6 +29,10 @@ declare namespace sa5 {
         get currentNum(): number;
         set currentNum(number); 
 
+        goToFirst(): void; 
+        goToLast(): void; 
+        goToPrev(): void; 
+        goToNext(): void; 
 
     }
 

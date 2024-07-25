@@ -7494,7 +7494,7 @@
   });
 
   // src/version.ts
-  var VERSION = "0.1.3";
+  var VERSION = "0.1.4";
 
   // src/page/home.ts
   var HomePage = class {
@@ -7823,6 +7823,27 @@
     }
   };
 
+  // src/page/quiz.ts
+  var QuizPage = class {
+    constructor() {
+    }
+    setup() {
+    }
+    exec() {
+    }
+  };
+
+  // src/routes.ts
+  var routeDispatcher = () => {
+    var routeDispatcher2 = new RouteDispatcher(Site);
+    routeDispatcher2.routes = {
+      "/": HomePage,
+      "/quiz": QuizPage,
+      "/quiz-section": QuizPage
+    };
+    return routeDispatcher2;
+  };
+
   // src/sa5/layout.ts
   var ElementGroupController = class {
     constructor() {
@@ -7970,9 +7991,9 @@
     }
   };
 
-  // src/page/quiz.ts
+  // src/components/quiz.ts
   var import_html2canvas = __toESM(require_html2canvas());
-  var QuizPage = class {
+  var QuizComponent = class {
     constructor() {
       this.elementGroupController = new ElementGroupController();
       this.data = QuizData.createWatchedObject((data, property, value) => {
@@ -8080,11 +8101,13 @@
       console.log(`Action triggered with value: ${actionValue}`);
       switch (actionValue) {
         case "back":
+          this.slider.prev();
           break;
         case "next":
           break;
         case "close":
           this.resetQuiz();
+          this.slider.currentNum = 1;
           break;
         case "restart":
           this.resetQuiz();
@@ -8092,6 +8115,21 @@
         case "download-result":
           this.downloadResult();
           break;
+        case "submit-form":
+          this.formSubmitClicked();
+      }
+    }
+    formSubmitClicked() {
+      const form = document.querySelector("[wfu-form=quiz] > form");
+      if (form) {
+        if (form.checkValidity()) {
+          console.log("Form is valid");
+          this.slider.currentNum = 10;
+        } else {
+          console.log("Form is not valid");
+        }
+      } else {
+        console.error("Form not found");
       }
     }
     downloadResult() {
@@ -8116,7 +8154,7 @@
       for (let i = 0; i < radios.length; i++) {
         radios[i].checked = false;
       }
-      this.slider.currentIndex = 0;
+      this.slider.currentNum = 2;
     }
     checkRadioSelection(container) {
       const radios = container.querySelectorAll('input[type="radio"]');
@@ -8172,17 +8210,6 @@
     }
   };
 
-  // src/routes.ts
-  var routeDispatcher = () => {
-    var routeDispatcher2 = new RouteDispatcher(Site);
-    routeDispatcher2.routes = {
-      "/": HomePage,
-      "/quiz": QuizPage,
-      "/quiz-section": QuizPage
-    };
-    return routeDispatcher2;
-  };
-
   // src/index.ts
   var SITE_NAME = "Site";
   initSSE();
@@ -8192,6 +8219,20 @@
   };
   var exec = () => {
     routeDispatcher().execRoute();
+    const components = document.querySelectorAll("[sse-component]");
+    components.forEach((element) => {
+      const componentValue = element.getAttribute("sse-component");
+      if (componentValue) {
+        switch (componentValue) {
+          case "quiz":
+            new QuizComponent().exec();
+            break;
+          default:
+            console.log("Unknown component:", componentValue);
+            break;
+        }
+      }
+    });
   };
   setup();
   if (document.readyState !== "loading") {

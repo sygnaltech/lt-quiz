@@ -13,6 +13,7 @@
 import { VERSION } from "./version";
 import { routeDispatcher } from "./routes";
 import { initSSE } from "@sygnal/sse"; 
+import { QuizComponent } from "./components/quiz";
 
 interface SiteGlobalDataType {
     // Define properties and their types for SiteDataType
@@ -60,6 +61,27 @@ const setup = () => {
 const exec = () => {
     
     routeDispatcher().execRoute(); 
+
+    // Components
+    const components = document.querySelectorAll('[sse-component]');
+    components.forEach(element => {
+        // Get the value of the SSE-component attribute
+        const componentValue = element.getAttribute('sse-component');
+        
+        if (componentValue) {
+            // Run a switch statement based on the attribute value
+            switch (componentValue) {
+                case 'quiz':
+
+                    (new QuizComponent()).exec();
+
+                    break;
+                default:
+                    console.log('Unknown component:', componentValue);
+                    break;
+            }
+        }
+    });    
 
 }
 
