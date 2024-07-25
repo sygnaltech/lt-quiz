@@ -8,16 +8,73 @@
 
 import { IRouteHandler } from "@sygnal/sse";
 import { ElementGroupController } from "../sa5/layout";
+import { QuizData } from "../models/quiz-data";
+import { IPInfo } from "../ipinfo";
 
 
 
 export class QuizPage implements IRouteHandler {
 
   elementGroupController: ElementGroupController;
+  data: QuizData;  
 
   constructor() {
     this.elementGroupController = new ElementGroupController(); 
+
+    // Create a reactive data object for page updates 
+    this.data = new QuizData();
+    this.data = this.createWatchedObject(this.data);
   }
+
+  createWatchedObject(data: QuizData): QuizData {
+    const handler: ProxyHandler<QuizData> = {
+      set: (target, property: keyof QuizData, value: any) => {
+        console.log(`Property ${String(property)} changed from ${target[property]} to ${value}`);
+        (target[property] as any) = value;
+        this.updateData();
+        return true;
+      }
+    };
+
+    return new Proxy(data, handler);
+  }
+
+  // Update all [data-item] tagged elements
+  // supports text elements and form input elements 
+  updateData() {
+    console.log('Current data:', this.data);
+
+    const dataElems: NodeListOf<HTMLElement> = document.querySelectorAll('[data-item]');
+    dataElems.forEach(elem => {
+
+      switch(elem.getAttribute("data-item")) {
+        case "score":
+          this.setElemData(elem, this.data.score.toString());
+          break;
+        case "percentage": case "probability":
+          const probability: number | null = this.data.probability; // this.getProbability(totalScore); 
+          if (probability) {
+              this.setElemData(elem, probability.toString()); 
+          }
+          break;
+        case "probability-display":
+          const percentage: string | null = this.data["probability-display"];
+          if (percentage) {
+            this.setElemData(elem, `${percentage}%`); 
+          }
+          break;
+        case "first-name":
+          this.setElemData(elem, this.data["first-name"]); 
+      }
+
+    });
+
+    this.elementGroupController.groups.get("result-chart")?.show(this.data.score.toString()); 
+
+    this.elementGroupController.groups.get("result-text")?.show(this.getScoreCategory(this.data.score)); 
+
+  }
+
 
   setup() {
         
@@ -25,19 +82,14 @@ export class QuizPage implements IRouteHandler {
 
   exec() {
 
-    this.fetchIPInfo();
+    (new IPInfo()).init();
+
     this.setupEventListeners();  
     
     this.elementGroupController.init(); 
     this.elementGroupController.groups.get("result-text")?.show("low"); 
     this.elementGroupController.groups.get("result-chart")?.show("1"); 
 
-    // const ipinfoWrapper = new IPinfoWrapper("37cce46c605631"); // Sygnal's HACK
-
-    // ipinfoWrapper.lookupIp("1.1.1.1").then((response: IPinfo) => {
-    //     console.log(response);
-    // });
-  
     const sa5: any = window['sa5' as any];
     sa5.push(['slideNextRequest', 
       (slider: any, index: any) => {
@@ -86,6 +138,26 @@ export class QuizPage implements IRouteHandler {
     });
 
 
+        /**
+         * Install Quiz actions
+         */
+
+    // Select all elements with the custom attribute 'quiz-action'
+    const dataItemSources = document.querySelectorAll('[data-item-source]');
+
+    // Iterate over each element
+    dataItemSources.forEach(element => {
+        // Get the value of the 'quiz-action' attribute
+        const actionValue = element.getAttribute('data-item-source');
+
+        if (actionValue) {
+            // Install a click handler on the element
+            element.addEventListener('changed', () => {
+                // Call the action function with the value of the 'quiz-action' attribute
+                this.actionFunction(actionValue);
+            });
+        }
+    });
 
   }
 
@@ -147,44 +219,6 @@ export class QuizPage implements IRouteHandler {
 }
 
 
-  async fetchIPInfo() {
-    const url = `https://ipinfo.io?token=37cce46c605631`;
-
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        console.log(data);
-
-      this.applyIPInfoData(data);
-
-    } catch (error) {
-        console.error('Failed to fetch IP info:', error);
-    }
-}
-
-
-applyIPInfoData(data: any) {
-  // Find all elements with the 'ip-info' attribute
-  const elements = document.querySelectorAll<HTMLElement>('[ip-info]');
-
-  // Iterate over each element
-  elements.forEach((element: HTMLElement) => {
-      // Get the property name from the 'ip-info' attribute
-      const propertyName = element.getAttribute('ip-info');
-      
-      // Check if the property exists in the data object
-      if (propertyName && data.hasOwnProperty(propertyName)) {
-          // Set the inner text of the element to the value of the corresponding property in the data object
-//          element.textContent = data[propertyName];
-
-        this.setElemData(element, data[propertyName]); 
-
-      } else {
-          console.log(`Property '${propertyName}' not found in data`);
-      }
-  });
-}
-
 
   private setupEventListeners(): void {
     // Get all radio input elements
@@ -214,32 +248,36 @@ applyIPInfoData(data: any) {
         scoreDisplay.textContent = `Total Score: ${totalScore}`;
     }
 
-    const dataElems: NodeListOf<HTMLElement> = document.querySelectorAll('[data-item]');
-    dataElems.forEach(elem => {
 
-      switch(elem.getAttribute("data-item")) {
-        case "score":
-          this.setElemData(elem, totalScore.toString());
-          break;
-        case "percentage": case "probability":
-          const probability: number | null = this.getProbability(totalScore); 
-          if (probability) {
-            this.setElemData(elem, probability.toString()); 
-          }
-          break;
-        case "probability-display":
-          const percentage: string | null = (this.getProbability(totalScore)! * 100).toFixed(2);
-          if (percentage) {
-            this.setElemData(elem, `${percentage}%`); 
-          }
-        }
+    this.data.score = totalScore;
+//    this.data.probability = this.getProbability(totalScore);
 
-    });
+    // const dataElems: NodeListOf<HTMLElement> = document.querySelectorAll('[data-item]');
+    // dataElems.forEach(elem => {
 
-    this.elementGroupController.groups.get("result-chart")?.show(totalScore.toString()); 
+    //   switch(elem.getAttribute("data-item")) {
+    //     case "score":
+    //       this.setElemData(elem, totalScore.toString());
+    //       break;
+    //     case "percentage": case "probability":
+    //       const probability: number | null = this.getProbability(totalScore); 
+    //       if (probability) {
+    //         this.setElemData(elem, probability.toString()); 
+    //       }
+    //       break;
+    //     case "probability-display":
+    //       const percentage: string | null = (this.getProbability(totalScore)! * 100).toFixed(2);
+    //       if (percentage) {
+    //         this.setElemData(elem, `${percentage}%`); 
+    //       }
+    //     }
+
+    // });
+
+    // this.elementGroupController.groups.get("result-chart")?.show(totalScore.toString()); 
 
 
-    this.elementGroupController.groups.get("result-text")?.show(this.getScoreCategory(totalScore)); 
+    // this.elementGroupController.groups.get("result-text")?.show(this.getScoreCategory(totalScore)); 
 
 
 
@@ -268,17 +306,6 @@ applyIPInfoData(data: any) {
     return "unknown";
   }
 
-  private getProbability(index: number): number | null {
-    const dataPoints: number[] = [0, 4.12, 6.10, 8.95, 12.95, 18.39, 25.42, 33.99, 43.76, 54.21, 64.25, 73.20, 80.57, 86.26, 90.44, 93.39];
-
-    // Check if the provided index is within the valid range
-    if (index < 0 || index >= dataPoints.length) {
-        console.error("Index out of range. Please provide an index between 0 and 15.");
-        return null; // Return null or throw an error if the index is out of range
-    }
-
-    return dataPoints[index] / 100.0; // Return the percentage value at the specified index
-  }
 
 
   setElemData(elem: HTMLElement, value: string): void {
