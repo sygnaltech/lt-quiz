@@ -24,7 +24,17 @@ export class QuizData {
       return `${(this.probability * 100).toFixed(2)}%`;
     }
   
-  
+    get "score-category"(): string {
+      if (this.score >= 0 && this.score <= 2) {
+          return "low";
+      } else if (this.score >= 3 && this.score <= 7) {
+          return "moderate";
+      } else if (this.score >= 8) {
+          return "high";
+      }
+      return "unknown";
+    }
+
     constructor() {
     }
 

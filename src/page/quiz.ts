@@ -4,14 +4,22 @@
  */
 
 // chart - https://codepen.io/memetican/pen/PorzKOW/38772a3ed4c8e3bd93e38a544c8ee0be
-
+// download chart image - https://codepen.io/memetican/pen/PorzKOW/38772a3ed4c8e3bd93e38a544c8ee0be
 
 import { IRouteHandler } from "@sygnal/sse";
 import { ElementGroupController } from "../sa5/layout";
 import { QuizData } from "../models/quiz-data";
 import { IPInfo } from "../ipinfo";
+import html2canvas from 'html2canvas';
 
+// [wfu-element] results      
 
+// data-item = name
+// will be set
+// works on text elements or input elements 
+
+// [quiz-action]
+// download-result 
 
 export class QuizPage implements IRouteHandler {
 
@@ -27,11 +35,6 @@ export class QuizPage implements IRouteHandler {
       console.log(`Property ${String(property)} changed to ${value}`);
       this.updateDisplayData();
     });
-
-console.log("init quizpage"); 
-
-console.log("x", sa5); 
-
 
   }
 
@@ -67,10 +70,9 @@ console.log("x", sa5);
     });
 
     this.elementGroupController.groups.get("result-chart")?.show(this.data.score.toString()); 
-    this.elementGroupController.groups.get("result-text")?.show(this.getScoreCategory(this.data.score)); 
+    this.elementGroupController.groups.get("result-text")?.show(this.data["score-category"]); 
 
   }
-
 
   setup() {
         
@@ -78,79 +80,79 @@ console.log("x", sa5);
 
   exec() {
 
+    // Initialize sa5 window var
     const sa5: any = window['sa5' as any];
 
+    // Fetch and load IPInfo 
     (new IPInfo()).init();
 
-
     // Load the slider 
-//    window["sa5" as any] = window["sa5" as any] || {}; 
-const sliderElem: HTMLElement | null = document.querySelector<HTMLElement>("[wfu-slider='quiz']"); 
-console.log("slider", sliderElem)
-if(sliderElem)
-  this.slider = new sa5.WebflowSlider(sliderElem);
+    const sliderElem: HTMLElement | null = document.querySelector<HTMLElement>("[wfu-slider='quiz']"); 
+    console.log("slider", sliderElem)
+    if(sliderElem)
+      this.slider = new sa5.WebflowSlider(sliderElem);
 
-    this.setupEventListeners();  
-    
-    this.elementGroupController.init(); 
-    this.elementGroupController.groups.get("result-text")?.show("low"); 
-    this.elementGroupController.groups.get("result-chart")?.show("1"); 
+      this.setupEventListeners();  
+      
+      this.elementGroupController.init(); 
+      this.elementGroupController.groups.get("result-text")?.show("low"); 
+      this.elementGroupController.groups.get("result-chart")?.show("1"); 
 
-    sa5.push(['slideNextRequest', 
-      (slider: any, index: any) => {
-        console.log("SLIDE NEXT REQUEST", slider.name, slider, index); 
+      sa5.push(['slideNextRequest', 
+        (slider: any, index: any) => {
+          console.log("SLIDE NEXT REQUEST", slider.name, slider, index); 
 
-        // Example usage:
-        // This will fetch the 3rd slide from the slider with the custom attribute 'wfu-slider="quiz"'
-        const slide = this.getSlideByPosition(index + 1);
-        if (slide) {
-            console.log('Slide found:', slide);
+          // Example usage:
+          // This will fetch the 3rd slide from the slider with the custom attribute 'wfu-slider="quiz"'
+          const slide = this.getSlideByPosition(index + 1);
+          if (slide) {
+              console.log('Slide found:', slide);
 
-          return this.checkRadioSelection(slide); 
+            return this.checkRadioSelection(slide); 
 
-        } else {
-            console.log('Slide not found.');
-        }
+          } else {
+              console.log('Slide not found.');
+          }
 
-        return (index < 6); 
-      }]); 
-    sa5.push(['slidePrevRequest', 
-      (slider: any, index: any) => {
-        console.log("SLIDE PREV REQUEST", slider.name, slider, index); 
-        return (index > 0); 
-      }]); 
+          return (index < 6); 
+        }]); 
+      sa5.push(['slidePrevRequest', 
+        (slider: any, index: any) => {
+          console.log("SLIDE PREV REQUEST", slider.name, slider, index); 
+          return (index > 0); 
+        }]); 
 
-    /**
-     * Install Quiz actions
-     */
+      /**
+       * Install Quiz actions
+       */
 
-    // Select all elements with the custom attribute 'quiz-action'
-    const elements = document.querySelectorAll('[quiz-action]');
+      // Select all elements with the custom attribute 'quiz-action'
+      const elements = document.querySelectorAll('[quiz-action]');
 
-    // Iterate over each element
-    elements.forEach(element => {
-        // Get the value of the 'quiz-action' attribute
-        const actionValue = element.getAttribute('quiz-action');
+      // Iterate over each element
+      elements.forEach(element => {
+          // Get the value of the 'quiz-action' attribute
+          const actionValue = element.getAttribute('quiz-action');
 
-        if (actionValue) {
-            // Install a click handler on the element
-            element.addEventListener('click', () => {
-                // Call the action function with the value of the 'quiz-action' attribute
-                this.actionFunction(actionValue);
-            });
-        }
-    });
+          if (actionValue) {
+              // Install a click handler on the element
+              element.addEventListener('click', () => {
+                  // Call the action function with the value of the 'quiz-action' attribute
+                  this.actionFunction(actionValue);
+              });
+          }
+      });
 
 
-    /**
-     * Install Data item source monitors
-     */
+      /**
+       * Install Data item source monitors
+       */
 
-    // Select all elements with the custom attribute 'quiz-action'
-    const dataItemSources = document.querySelectorAll('[data-item-source]');
+      // Select all elements with the custom attribute 'quiz-action'
+      const dataItemSources = document.querySelectorAll('[data-item-source]');
 
-    // Iterate over each element
-    dataItemSources.forEach(elem => {
+      // Iterate over each element
+      dataItemSources.forEach(elem => {
         // Get the value of the 'quiz-action' attribute
         const actionValue = elem.getAttribute('data-item-source');
         if (actionValue) {
@@ -207,7 +209,34 @@ if(sliderElem)
         this.resetQuiz();
 
         break;
+      case "download-result": 
+        this.downloadResult(); 
+
+        break; 
     }
+
+  }
+
+  downloadResult() {
+    // Locate the element with the custom attribute wfu-element="results"
+    const element = document.querySelector<HTMLElement>('[wfu-element="results"]');
+    
+    if (!element) {
+        console.error('Element with wfu-element="results" not found');
+        return;
+    }
+
+    // Use html2canvas to capture the element and download as PNG
+    html2canvas(element, {
+      useCORS: true,
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'results.png';
+        link.click();
+    }).catch(error => {
+        console.error('Failed to capture element as PNG:', error);
+    });
 
   }
 
@@ -297,16 +326,16 @@ if(sliderElem)
 
   }
 
-  getScoreCategory(totalScore: number): string {
-    if (totalScore >= 0 && totalScore <= 2) {
-        return "low";
-    } else if (totalScore >= 3 && totalScore <= 7) {
-        return "moderate";
-    } else if (totalScore >= 8) {
-        return "high";
-    }
-    return "unknown";
-  }
+  // getScoreCategory(totalScore: number): string {
+  //   if (totalScore >= 0 && totalScore <= 2) {
+  //       return "low";
+  //   } else if (totalScore >= 3 && totalScore <= 7) {
+  //       return "moderate";
+  //   } else if (totalScore >= 8) {
+  //       return "high";
+  //   }
+  //   return "unknown";
+  // }
 
 
 
