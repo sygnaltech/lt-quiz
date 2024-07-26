@@ -34,6 +34,7 @@ export class QuizComponent implements IRouteHandler {
   elementGroupController: ElementGroupController;
   data: QuizData;  
   slider: any;
+  form: any; 
 
   constructor() {
     this.elementGroupController = new ElementGroupController(); 
@@ -94,17 +95,29 @@ export class QuizComponent implements IRouteHandler {
     // Fetch and load IPInfo 
     (new IPInfo()).init();
 
+
+    // Load the slider 
+    const formElem: HTMLElement | null = document.querySelector<HTMLElement>("[wfu-form='quiz']"); 
+    console.log("form", formElem)
+    if(formElem)
+      this.form = new sa5.Sa5Form(formElem);
+
+    console.log("sa5 form", this.form); 
+this.form.setMode(0);
+
     // Load the slider 
     const sliderElem: HTMLElement | null = document.querySelector<HTMLElement>("[wfu-slider='quiz']"); 
     console.log("slider", sliderElem)
     if(sliderElem)
       this.slider = new sa5.WebflowSlider(sliderElem);
 
-      this.setupEventListeners();  
-      
-      this.elementGroupController.init(); 
-      this.elementGroupController.groups.get("result-text")?.show("low"); 
-      this.elementGroupController.groups.get("result-chart")?.show("1"); 
+// this.slider.currentNum = QuizSlide.FORM; 
+
+    this.setupEventListeners();  
+    
+    this.elementGroupController.init(); 
+    this.elementGroupController.groups.get("result-text")?.show("low"); 
+    this.elementGroupController.groups.get("result-chart")?.show("1"); 
 
       // sa5.push(['slideNextRequest', 
       //   (slider: any, index: any) => {
@@ -207,6 +220,7 @@ export class QuizComponent implements IRouteHandler {
 
     switch(actionValue) {
       case "back":
+
         if (this.slider.currentIndex > 0) 
           this.slider.goToPrev();
         break;
@@ -227,11 +241,13 @@ export class QuizComponent implements IRouteHandler {
 
         break;
       case "close":
+
         this.resetQuiz();
         this.slider.currentNum = QuizSlide.WELCOME;
          
         break;
-      case "restart":
+      case "restart":  
+
         this.resetQuiz();
         this.slider.currentNum = QuizSlide.QUIZ;
 
@@ -292,20 +308,18 @@ export class QuizComponent implements IRouteHandler {
   }
 
   resetQuiz() {
-//    const radios = document.querySelectorAll<HTMLInputElement>('input[type="radio"]');
     const labels = document.querySelectorAll<HTMLLabelElement>('label.w-radio');
 
     console.log("this.resetQuiz", labels.length);
 
     // Clear all radio buttons
     for (let i = 0; i < labels.length; i++) {
-
-
-    const radioButton = new WebflowRadioButton(labels[i]);
-//    radioButton.toggleCheck();
-
+      const radioButton = new WebflowRadioButton(labels[i]);
       radioButton.checked = false;
     }
+
+    // Set form back to active state
+    this.form.setMode(0); // 0 = Active | 1 = Success | 2 = Error
 
     // Change slide to position 1
     this.slider.currentNum = QuizSlide.QUIZ;
@@ -354,7 +368,14 @@ export class QuizComponent implements IRouteHandler {
     
     // Add an event listener to each radio button
     radios.forEach(radio => {
-        radio.addEventListener('change', () => this.calculateTotalScore());
+        radio.addEventListener('change', () => {
+          
+          this.calculateTotalScore(); 
+//          console.log("next...")
+          this.slider.goToNext();
+          
+        });
+
     });
   }
 

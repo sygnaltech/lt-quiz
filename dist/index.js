@@ -7494,7 +7494,7 @@
   });
 
   // src/version.ts
-  var VERSION = "0.1.4";
+  var VERSION = "0.1.5";
 
   // src/page/home.ts
   var HomePage = class {
@@ -8101,6 +8101,12 @@
       var _a, _b;
       const sa5 = window["sa5"];
       new IPInfo().init();
+      const formElem = document.querySelector("[wfu-form='quiz']");
+      console.log("form", formElem);
+      if (formElem)
+        this.form = new sa5.Sa5Form(formElem);
+      console.log("sa5 form", this.form);
+      this.form.setMode(0);
       const sliderElem = document.querySelector("[wfu-slider='quiz']");
       console.log("slider", sliderElem);
       if (sliderElem)
@@ -8210,6 +8216,7 @@
         const radioButton = new WebflowRadioButton(labels[i]);
         radioButton.checked = false;
       }
+      this.form.setMode(0);
       this.slider.currentNum = 2 /* QUIZ */;
     }
     isRadioButtonSelectedInContainer(container) {
@@ -8237,7 +8244,10 @@
     setupEventListeners() {
       const radios = document.querySelectorAll('input[type="radio"]');
       radios.forEach((radio) => {
-        radio.addEventListener("change", () => this.calculateTotalScore());
+        radio.addEventListener("change", () => {
+          this.calculateTotalScore();
+          this.slider.goToNext();
+        });
       });
     }
     calculateTotalScore() {
