@@ -87,6 +87,24 @@ export class QuizComponent implements IRouteHandler {
     this.elementGroupController.groups.get("result-text")?.show("low"); 
     this.elementGroupController.groups.get("result-chart")?.show("1"); 
 
+    // Select all elements with the class `w-slide`
+    const slides = document.querySelectorAll<HTMLElement>('.w-slide');
+
+    slides.forEach((slide, index) => {
+        // Generate the group name based on the slide index
+        const groupName = `group${index}`;
+        console.log(`Found slide with index ${index}, assigning group name: ${groupName}`);
+
+        // Find all descendant radio buttons within the slide element
+        const radioButtons = slide.querySelectorAll<HTMLInputElement>('input[type="radio"]');
+
+        // Set the `name` attribute of each radio button to the generated group name
+        radioButtons.forEach(radioButton => {
+            radioButton.name = groupName;
+            console.log(`Setting radio button name to ${radioButton.name}`);
+        });
+    });
+
     // Hide all controls
     this.nav.showControls(false, false, false, false);
 

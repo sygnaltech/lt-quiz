@@ -7734,6 +7734,16 @@
       this.elementGroupController.init();
       (_a = this.elementGroupController.groups.get("result-text")) == null ? void 0 : _a.show("low");
       (_b = this.elementGroupController.groups.get("result-chart")) == null ? void 0 : _b.show("1");
+      const slides = document.querySelectorAll(".w-slide");
+      slides.forEach((slide, index) => {
+        const groupName = `group${index}`;
+        console.log(`Found slide with index ${index}, assigning group name: ${groupName}`);
+        const radioButtons = slide.querySelectorAll('input[type="radio"]');
+        radioButtons.forEach((radioButton) => {
+          radioButton.name = groupName;
+          console.log(`Setting radio button name to ${radioButton.name}`);
+        });
+      });
       this.nav.showControls(false, false, false, false);
       sa5.push([
         "slideChanged",
