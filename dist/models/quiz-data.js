@@ -7,9 +7,9 @@
       this["first-name"] = "";
     }
     get probability() {
-      const dataPoints = [0, 4.12, 6.1, 8.95, 12.95, 18.39, 25.42, 33.99, 43.76, 54.21, 64.25, 73.2, 80.57, 86.26, 90.44, 93.39];
+      const dataPoints = [2.76, 4.12, 6.1, 8.95, 12.95, 18.39, 25.42, 33.99, 43.76, 54.21, 64.25, 73.2, 80.57, 86.26, 90.44, 93.39, 95.43];
       if (this.score < 0 || this.score >= dataPoints.length) {
-        console.error("Index out of range. Please provide an index between 0 and 15.");
+        console.error("Index out of range. Please provide an index between 0 and 16.");
         return null;
       }
       return dataPoints[this.score] / 100;

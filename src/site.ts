@@ -40,9 +40,9 @@ export class Site implements IRouteHandler {
           elements.forEach(element => {
               element.parentElement?.removeChild(element);
           });
-          console.log('Elements with class "w-webflow-badge" have been removed.');
+//          console.log('Elements with class "w-webflow-badge" have been removed.');
       } else {
-          console.log('No elements with class "w-webflow-badge" found.');
+//          console.log('No elements with class "w-webflow-badge" found.');
       }
     };
 

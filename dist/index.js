@@ -7830,9 +7830,7 @@
             var _a;
             (_a = element.parentElement) == null ? void 0 : _a.removeChild(element);
           });
-          console.log('Elements with class "w-webflow-badge" have been removed.');
         } else {
-          console.log('No elements with class "w-webflow-badge" found.');
         }
       };
       setTimeout(removeElements, delayMs);
@@ -7928,9 +7926,9 @@
       this["first-name"] = "";
     }
     get probability() {
-      const dataPoints = [0, 4.12, 6.1, 8.95, 12.95, 18.39, 25.42, 33.99, 43.76, 54.21, 64.25, 73.2, 80.57, 86.26, 90.44, 93.39];
+      const dataPoints = [2.76, 4.12, 6.1, 8.95, 12.95, 18.39, 25.42, 33.99, 43.76, 54.21, 64.25, 73.2, 80.57, 86.26, 90.44, 93.39, 95.43];
       if (this.score < 0 || this.score >= dataPoints.length) {
-        console.error("Index out of range. Please provide an index between 0 and 15.");
+        console.error("Index out of range. Please provide an index between 0 and 16.");
         return null;
       }
       return dataPoints[this.score] / 100;
@@ -8081,6 +8079,7 @@
       this.elementGroupController = new ElementGroupController();
       this.data = QuizData.createWatchedObject((data, property, value) => {
         console.log(`Property ${String(property)} changed to ${value}`);
+        console.log("Model updated", data);
         this.updateDisplayData();
       });
       this.nav = new QuizNavComponent();
@@ -8104,11 +8103,9 @@
       const slides = document.querySelectorAll(".w-slide");
       slides.forEach((slide, index) => {
         const groupName = `group${index}`;
-        console.log(`Found slide with index ${index}, assigning group name: ${groupName}`);
         const radioButtons = slide.querySelectorAll('input[type="radio"]');
         radioButtons.forEach((radioButton) => {
           radioButton.name = groupName;
-          console.log(`Setting radio button name to ${radioButton.name}`);
         });
       });
       this.nav.showControls(false, false, false, false);
@@ -8127,13 +8124,6 @@
               break;
             default:
               this.nav.showControls(true, true, true, true);
-              break;
-          }
-          console.log("SLIDE CHANGED", slider.name, slider, index);
-          switch (slider.name) {
-            case "demo1":
-              break;
-            case "demo2":
               break;
           }
         }
@@ -8169,7 +8159,6 @@
     }
     updateDisplayData() {
       var _a, _b;
-      console.log("Current data:", this.data);
       const dataElems = document.querySelectorAll("[data-item]");
       dataElems.forEach((elem) => {
         switch (elem.getAttribute("data-item")) {
@@ -8209,11 +8198,9 @@
         case "next":
           const slide = this.getSlideByPosition(this.slider.currentIndex + 1);
           if (slide) {
-            console.log("Slide found:", slide);
             if (this.isRadioButtonSelectedInContainer(slide))
               this.slider.goToNext();
           } else {
-            console.log("Slide not found.");
           }
           break;
         case "close":
@@ -8235,10 +8222,8 @@
       const form = document.querySelector("[wfu-form=quiz] > form");
       if (form) {
         if (form.checkValidity()) {
-          console.log("Form is valid");
           this.slider.currentNum = 10 /* RESULTS */;
         } else {
-          console.log("Form is not valid");
         }
       } else {
         console.error("Form not found");
@@ -8263,7 +8248,6 @@
     }
     resetQuiz() {
       const labels = document.querySelectorAll("label.w-radio");
-      console.log("this.resetQuiz", labels.length);
       for (let i = 0; i < labels.length; i++) {
         const radioButton = new WebflowRadioButton(labels[i]);
         radioButton.checked = false;
@@ -8305,7 +8289,6 @@
     calculateTotalScore() {
       const checkedRadios = document.querySelectorAll('input[type="radio"]:checked');
       let totalScore = 0;
-      console.log("clicked");
       checkedRadios.forEach((radio) => {
         totalScore += Number(radio.value);
       });

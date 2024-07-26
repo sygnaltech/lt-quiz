@@ -44,6 +44,7 @@ export class QuizComponent implements IRouteHandler {
     // Create a reactive data object for page updates 
     this.data = QuizData.createWatchedObject((data, property, value) => {
       console.log(`Property ${String(property)} changed to ${value}`);
+      console.log("Model updated", data); 
       this.updateDisplayData();
     });
 
@@ -66,20 +67,13 @@ export class QuizComponent implements IRouteHandler {
 
     // Load the slider 
     const formElem: HTMLElement | null = document.querySelector<HTMLElement>("[wfu-form='quiz']"); 
-//    console.log("form", formElem)
     if(formElem)
       this.form = new sa5.Sa5Form(formElem);
 
-//    console.log("sa5 form", this.form); 
-// this.form.setMode(0);
-
     // Load the slider 
     const sliderElem: HTMLElement | null = document.querySelector<HTMLElement>("[wfu-slider='quiz']"); 
-//    console.log("slider", sliderElem)
     if(sliderElem)
       this.slider = new sa5.WebflowSlider(sliderElem);
-
-// this.slider.currentNum = QuizSlide.FORM; 
 
     this.setupEventListeners();  
     
@@ -93,7 +87,7 @@ export class QuizComponent implements IRouteHandler {
     slides.forEach((slide, index) => {
         // Generate the group name based on the slide index
         const groupName = `group${index}`;
-        console.log(`Found slide with index ${index}, assigning group name: ${groupName}`);
+//        console.log(`Found slide with index ${index}, assigning group name: ${groupName}`);
 
         // Find all descendant radio buttons within the slide element
         const radioButtons = slide.querySelectorAll<HTMLInputElement>('input[type="radio"]');
@@ -101,13 +95,14 @@ export class QuizComponent implements IRouteHandler {
         // Set the `name` attribute of each radio button to the generated group name
         radioButtons.forEach(radioButton => {
             radioButton.name = groupName;
-            console.log(`Setting radio button name to ${radioButton.name}`);
+//            console.log(`Setting radio button name to ${radioButton.name}`);
         });
     });
 
     // Hide all controls
     this.nav.showControls(false, false, false, false);
 
+    // When the slide changes, reconfigure the nav 
     sa5.push(['slideChanged', 
       (slider: any, index: number) => {
         
@@ -125,43 +120,8 @@ export class QuizComponent implements IRouteHandler {
             this.nav.showControls(true, true, true, true);
             break;
         }
-
-        console.log("SLIDE CHANGED", slider.name, slider, index); 
-    
-        switch(slider.name) {
-          case "demo1": // Demo 1 slide changed
-    
-            break;
-          case "demo2": // Demo 2 slide changed
-    
-            break;
-        }
     
       }]); 
-
-      // sa5.push(['slideNextRequest', 
-      //   (slider: any, index: any) => {
-      //     console.log("SLIDE NEXT REQUEST", slider.name, slider, index); 
-
-      //     // Example usage:
-      //     // This will fetch the 3rd slide from the slider with the custom attribute 'wfu-slider="quiz"'
-      //     const slide = this.getSlideByPosition(index + 1);
-      //     if (slide) {
-      //         console.log('Slide found:', slide);
-
-      //       return this.checkRadioSelection(slide); 
-
-      //     } else {
-      //         console.log('Slide not found.');
-      //     }
-
-      //     return (index < 6); 
-      //   }]); 
-      // sa5.push(['slidePrevRequest', 
-      //   (slider: any, index: any) => {
-      //     console.log("SLIDE PREV REQUEST", slider.name, slider, index); 
-      //     return (index > 0); 
-      //   }]); 
 
       /**
        * Install Quiz actions
@@ -230,7 +190,7 @@ export class QuizComponent implements IRouteHandler {
   // Update all [data-item] tagged elements
   // supports text elements and form input elements 
   updateDisplayData() {
-    console.log('Current data:', this.data);
+//    console.log('Current data:', this.data);
 
     const dataElems: NodeListOf<HTMLElement> = document.querySelectorAll('[data-item]');
     dataElems.forEach(elem => {
@@ -281,17 +241,15 @@ export class QuizComponent implements IRouteHandler {
         break;
       case "next":
 
-//      this.slider.currentIndex
-
           const slide = this.getSlideByPosition(this.slider.currentIndex + 1);
           if (slide) {
-              console.log('Slide found:', slide);
+//              console.log('Slide found:', slide);
 
             if (this.isRadioButtonSelectedInContainer(slide)) 
               this.slider.goToNext();
 
           } else {
-              console.log('Slide not found.');
+//              console.log('Slide not found.');
           }
 
         break;
@@ -325,12 +283,12 @@ export class QuizComponent implements IRouteHandler {
 
             // Check if the form is valid
             if (form.checkValidity()) {
-                console.log('Form is valid');
+  //              console.log('Form is valid');
                 // Optionally, you can submit the form or handle form data here
                 this.slider.currentNum = QuizSlide.RESULTS; 
   //              form.submit();  // or handle the form data manually
             } else {
-                console.log('Form is not valid');
+  //              console.log('Form is not valid');
                 // Optionally, display validation feedback
 //                form.reportValidity();  // This will trigger the browser's built-in validation feedback
             }
@@ -365,7 +323,7 @@ export class QuizComponent implements IRouteHandler {
   resetQuiz() {
     const labels = document.querySelectorAll<HTMLLabelElement>('label.w-radio');
 
-    console.log("this.resetQuiz", labels.length);
+  //  console.log("this.resetQuiz", labels.length);
 
     // Clear all radio buttons
     for (let i = 0; i < labels.length; i++) {
@@ -426,7 +384,6 @@ export class QuizComponent implements IRouteHandler {
         radio.addEventListener('change', () => {
           
           this.calculateTotalScore(); 
-//          console.log("next...")
           this.slider.goToNext();
           
         });
@@ -438,7 +395,6 @@ export class QuizComponent implements IRouteHandler {
     // Get all checked radio input elements
     const checkedRadios: NodeListOf<HTMLInputElement> = document.querySelectorAll('input[type="radio"]:checked');
     let totalScore: number = 0;
-    console.log("clicked");
 
     // Sum the values of the checked radio inputs
     checkedRadios.forEach(radio => {
@@ -467,10 +423,7 @@ export class QuizComponent implements IRouteHandler {
   //   return "unknown";
   // }
 
-
-
   setElemData(elem: HTMLElement, value: string): void {
-
 
     switch(elem.tagName.toLowerCase()) {
       case "input":
@@ -485,7 +438,6 @@ export class QuizComponent implements IRouteHandler {
 
         break;
     }
-
 
   }
 

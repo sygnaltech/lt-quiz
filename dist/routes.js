@@ -326,9 +326,7 @@
             var _a;
             (_a = element.parentElement) == null ? void 0 : _a.removeChild(element);
           });
-          console.log('Elements with class "w-webflow-badge" have been removed.');
         } else {
-          console.log('No elements with class "w-webflow-badge" found.');
         }
       };
       setTimeout(removeElements, delayMs);
