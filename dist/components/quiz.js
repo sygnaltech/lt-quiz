@@ -80,7 +80,7 @@
           };
           return __assign.apply(this, arguments);
         };
-        function __awaiter2(thisArg, _arguments, P, generator) {
+        function __awaiter(thisArg, _arguments, P, generator) {
           function adopt(value) {
             return value instanceof P ? value : new P(function(resolve) {
               resolve(value);
@@ -5060,7 +5060,7 @@
             var cloneWindow = iframe.contentWindow;
             var documentClone = cloneWindow.document;
             var iframeLoad = iframeLoader(iframe).then(function() {
-              return __awaiter2(_this, void 0, void 0, function() {
+              return __awaiter(_this, void 0, void 0, function() {
                 var onclone, referenceElement;
                 return __generator(this, function(_a) {
                   switch (_a.label) {
@@ -5533,7 +5533,7 @@
             return this._cache[src];
           };
           Cache2.prototype.loadImage = function(key) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               var isSameOrigin, useCORS, useProxy, src;
               var _this = this;
               return __generator(this, function(_a) {
@@ -6366,7 +6366,7 @@
             this.ctx.restore();
           };
           CanvasRenderer2.prototype.renderStack = function(stack) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               var styles;
               return __generator(this, function(_a) {
                 switch (_a.label) {
@@ -6385,7 +6385,7 @@
             });
           };
           CanvasRenderer2.prototype.renderNode = function(paint) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               return __generator(this, function(_a) {
                 switch (_a.label) {
                   case 0:
@@ -6432,7 +6432,7 @@
             ];
           };
           CanvasRenderer2.prototype.renderTextNode = function(text, styles) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               var _a, font, fontFamily2, fontSize2, _b, baseline, middle, paintOrder2;
               var _this = this;
               return __generator(this, function(_c) {
@@ -6510,7 +6510,7 @@
             }
           };
           CanvasRenderer2.prototype.renderNodeContent = function(paint) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               var container, curves, styles, _i, _a, child, image2, image2, iframeRenderer, canvas, size, _b, fontFamily2, fontSize2, baseline, bounds, x, textBounds, img, image2, url, fontFamily2, bounds;
               return __generator(this, function(_c) {
                 switch (_c.label) {
@@ -6687,7 +6687,7 @@
             });
           };
           CanvasRenderer2.prototype.renderStackContent = function(stack) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               var _i, _a, child, _b, _c, child, _d, _e, child, _f, _g, child, _h, _j, child, _k, _l, child, _m, _o, child;
               return __generator(this, function(_p) {
                 switch (_p.label) {
@@ -6854,7 +6854,7 @@
             return canvas;
           };
           CanvasRenderer2.prototype.renderBackgroundImage = function(container) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               var index, _loop_1, this_1, _i, _a, backgroundImage2;
               return __generator(this, function(_b) {
                 switch (_b.label) {
@@ -6970,7 +6970,7 @@
             });
           };
           CanvasRenderer2.prototype.renderSolidBorder = function(color2, side, curvePoints) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               return __generator(this, function(_a) {
                 this.path(parsePathForBorder(curvePoints, side));
                 this.ctx.fillStyle = asString(color2);
@@ -6980,7 +6980,7 @@
             });
           };
           CanvasRenderer2.prototype.renderDoubleBorder = function(color2, width, side, curvePoints) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               var outerPaths, innerPaths;
               return __generator(this, function(_a) {
                 switch (_a.label) {
@@ -7005,7 +7005,7 @@
             });
           };
           CanvasRenderer2.prototype.renderNodeBackgroundAndBorders = function(paint) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               var styles, hasBackground, borders, backgroundPaintingArea, side, _i, borders_1, border;
               var _this = this;
               return __generator(this, function(_a) {
@@ -7105,7 +7105,7 @@
             });
           };
           CanvasRenderer2.prototype.renderDashedDottedBorder = function(color2, width, side, curvePoints, style) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               var strokePaths, boxPaths, startX, startY, endX, endY, length, dashLength, spaceLength, useLineDash, multiplier, numberOfDashes, minSpace, maxSpace, path1, path2, path1, path2;
               return __generator(this, function(_a) {
                 this.ctx.save();
@@ -7197,7 +7197,7 @@
             });
           };
           CanvasRenderer2.prototype.render = function(element) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               var stack;
               return __generator(this, function(_a) {
                 switch (_a.label) {
@@ -7273,7 +7273,7 @@
             return _this;
           }
           ForeignObjectRenderer2.prototype.render = function(element) {
-            return __awaiter2(this, void 0, void 0, function() {
+            return __awaiter(this, void 0, void 0, function() {
               var svg, img;
               return __generator(this, function(_a) {
                 switch (_a.label) {
@@ -7388,7 +7388,7 @@
           CacheStorage.setContext(window);
         }
         var renderElement = function(element, opts) {
-          return __awaiter2(void 0, void 0, void 0, function() {
+          return __awaiter(void 0, void 0, void 0, function() {
             var ownerDocument, defaultView, resourceOptions, contextOptions, windowOptions, windowBounds, context, foreignObjectRendering, cloneOptions, documentCloner, clonedElement, container, _a, width, height, left, top, backgroundColor2, renderOptions, canvas, renderer, root, renderer;
             var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
             return __generator(this, function(_u) {
@@ -7492,373 +7492,6 @@
       });
     }
   });
-
-  // src/version.ts
-  var VERSION = "0.1.4";
-
-  // src/page/home.ts
-  var HomePage = class {
-    constructor() {
-    }
-    setup() {
-    }
-    exec() {
-    }
-  };
-
-  // node_modules/@sygnal/sse/dist/page.js
-  var __awaiter = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
-  var Page = class {
-    static getQueryParam(name) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(name);
-    }
-    static loadScript(url) {
-      const script = document.createElement("script");
-      script.src = url;
-      document.body.appendChild(script);
-    }
-    static loadCSS(url) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = url;
-      document.head.appendChild(link);
-    }
-    static loadEngineCSS(cssFileName) {
-      let libPath = window.SSE.baseUrl;
-      const cssURL = `${libPath}/css/${cssFileName}`;
-      this.loadCSS(cssURL);
-    }
-    static loadStyle(css) {
-      const style = document.createElement("style");
-      style.innerText = css;
-      document.head.appendChild(style);
-    }
-    static replaceScriptSource(element, newSrc) {
-      element.src = newSrc;
-    }
-    static replaceCSSLink(element, newHref) {
-      element.href = newHref;
-    }
-    static prependToTitle(text) {
-      document.title = `${text}${document.title}`;
-    }
-    static getCurrentScriptUrl() {
-      if (document.currentScript) {
-        const currentScript = document.currentScript;
-        return currentScript.src;
-      }
-      console.error("document.currentScript is not supported in this browser.");
-      return null;
-    }
-    static getCurrentScriptBaseUrl() {
-      const currentScript = document.currentScript;
-      if (currentScript) {
-        const scriptURL = new URL(currentScript.src);
-        const origin = scriptURL.origin;
-        const path = scriptURL.pathname.substring(0, scriptURL.pathname.lastIndexOf("/"));
-        const baseURL = `${origin}${path}`;
-        return baseURL;
-      } else {
-        console.error("Unable to determine the currently executing script.");
-      }
-      return void 0;
-    }
-    static findAncestorWithAttribute(element, attributeName) {
-      let currentElement = element;
-      while (currentElement) {
-        if (currentElement.hasAttribute(attributeName)) {
-          return currentElement;
-        }
-        currentElement = currentElement.parentElement;
-      }
-      return null;
-    }
-    static getAncestorAttributeValue(element, attributeName) {
-      let currentElement = element;
-      while (currentElement) {
-        if (currentElement.hasAttribute(attributeName)) {
-          return currentElement.getAttribute(attributeName);
-        }
-        currentElement = currentElement.parentElement;
-      }
-      return null;
-    }
-    static hasAncestorWithAttribute(element, attributeName) {
-      return this.findAncestorWithAttribute(element, attributeName) !== null;
-    }
-    static convertToPixels(value, contextElement = document.documentElement) {
-      const match = value.match(/^(-?\d+\.?\d*)(rem|em|px|vh|vw|%)$/);
-      if (!match)
-        throw new Error("Invalid value format");
-      const [, amountStr, unit] = match;
-      const amount = parseFloat(amountStr);
-      switch (unit) {
-        case "px":
-          return amount;
-        case "rem":
-          return amount * parseFloat(getComputedStyle(document.documentElement).fontSize);
-        case "em":
-          return amount * parseFloat(getComputedStyle(contextElement).fontSize);
-        case "vh":
-          return amount * window.innerHeight / 100;
-        case "vw":
-          return amount * window.innerWidth / 100;
-        case "%":
-          return amount * contextElement.clientWidth / 100;
-        default:
-          throw new Error("Unsupported unit");
-      }
-    }
-    static getResponseHeader(headerName_1) {
-      return __awaiter(this, arguments, void 0, function* (headerName, url = void 0) {
-        const headers = yield this.getResponseHeaders(url);
-        if (!headers)
-          return void 0;
-        if (!headers.has(headerName))
-          return void 0;
-        return headers.get(headerName) || void 0;
-      });
-    }
-    static getResponseHeaders() {
-      return __awaiter(this, arguments, void 0, function* (url = void 0) {
-        try {
-          if (!url) {
-            url = window.location.href;
-          }
-          const response = yield fetch(url, {
-            method: "HEAD"
-          });
-          return response.headers;
-        } catch (error) {
-          console.error("Error checking reverse proxy header:", error);
-        }
-        return void 0;
-      });
-    }
-  };
-
-  // node_modules/js-cookie/dist/js.cookie.mjs
-  function assign(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-      for (var key in source) {
-        target[key] = source[key];
-      }
-    }
-    return target;
-  }
-  var defaultConverter = {
-    read: function(value) {
-      if (value[0] === '"') {
-        value = value.slice(1, -1);
-      }
-      return value.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
-    },
-    write: function(value) {
-      return encodeURIComponent(value).replace(
-        /%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,
-        decodeURIComponent
-      );
-    }
-  };
-  function init(converter, defaultAttributes) {
-    function set(name, value, attributes) {
-      if (typeof document === "undefined") {
-        return;
-      }
-      attributes = assign({}, defaultAttributes, attributes);
-      if (typeof attributes.expires === "number") {
-        attributes.expires = new Date(Date.now() + attributes.expires * 864e5);
-      }
-      if (attributes.expires) {
-        attributes.expires = attributes.expires.toUTCString();
-      }
-      name = encodeURIComponent(name).replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent).replace(/[()]/g, escape);
-      var stringifiedAttributes = "";
-      for (var attributeName in attributes) {
-        if (!attributes[attributeName]) {
-          continue;
-        }
-        stringifiedAttributes += "; " + attributeName;
-        if (attributes[attributeName] === true) {
-          continue;
-        }
-        stringifiedAttributes += "=" + attributes[attributeName].split(";")[0];
-      }
-      return document.cookie = name + "=" + converter.write(value, name) + stringifiedAttributes;
-    }
-    function get(name) {
-      if (typeof document === "undefined" || arguments.length && !name) {
-        return;
-      }
-      var cookies = document.cookie ? document.cookie.split("; ") : [];
-      var jar = {};
-      for (var i = 0; i < cookies.length; i++) {
-        var parts = cookies[i].split("=");
-        var value = parts.slice(1).join("=");
-        try {
-          var found = decodeURIComponent(parts[0]);
-          jar[found] = converter.read(value, found);
-          if (name === found) {
-            break;
-          }
-        } catch (e) {
-        }
-      }
-      return name ? jar[name] : jar;
-    }
-    return Object.create(
-      {
-        set,
-        get,
-        remove: function(name, attributes) {
-          set(
-            name,
-            "",
-            assign({}, attributes, {
-              expires: -1
-            })
-          );
-        },
-        withAttributes: function(attributes) {
-          return init(this.converter, assign({}, this.attributes, attributes));
-        },
-        withConverter: function(converter2) {
-          return init(assign({}, this.converter, converter2), this.attributes);
-        }
-      },
-      {
-        attributes: { value: Object.freeze(defaultAttributes) },
-        converter: { value: Object.freeze(converter) }
-      }
-    );
-  }
-  var api = init(defaultConverter, { path: "/" });
-
-  // node_modules/@sygnal/sse/dist/routeDispatcher.js
-  var RouteDispatcher = class {
-    constructor(SiteClass) {
-      this._SiteClass = SiteClass;
-    }
-    matchRoute(path) {
-      for (const route in this.routes) {
-        if (route.endsWith("*")) {
-          const baseRoute = route.slice(0, -1);
-          if (path.startsWith(baseRoute)) {
-            return this.routes[route];
-          }
-        } else if (route === path) {
-          return this.routes[route];
-        }
-      }
-      return null;
-    }
-    setupRoute() {
-      const site = new this._SiteClass();
-      site.setup();
-      const path = window.location.pathname;
-      const HandlerClass = this.matchRoute(path);
-      if (HandlerClass) {
-        const handlerInstance = new HandlerClass();
-        handlerInstance.setup();
-      } else {
-      }
-    }
-    execRoute() {
-      const site = new this._SiteClass();
-      site.exec();
-      const path = window.location.pathname;
-      const HandlerClass = this.matchRoute(path);
-      if (HandlerClass) {
-        const handlerInstance = new HandlerClass();
-        handlerInstance.exec();
-      } else {
-      }
-    }
-  };
-
-  // node_modules/@sygnal/sse/dist/index.js
-  function initSSE() {
-    if (!window.SSE) {
-      window.SSE = {};
-    }
-    window.SSE.baseUrl = Page.getCurrentScriptBaseUrl();
-  }
-
-  // src/site.ts
-  var Site = class {
-    constructor() {
-    }
-    setup() {
-      Page.loadEngineCSS("site.css");
-    }
-    exec() {
-      this.removeWebflowBadge();
-    }
-    removeWebflowBadge(delayMs = 1e3) {
-      const removeElements = () => {
-        const elements = document.querySelectorAll(".w-webflow-badge");
-        if (elements.length > 0) {
-          elements.forEach((element) => {
-            var _a;
-            (_a = element.parentElement) == null ? void 0 : _a.removeChild(element);
-          });
-          console.log('Elements with class "w-webflow-badge" have been removed.');
-        } else {
-          console.log('No elements with class "w-webflow-badge" found.');
-        }
-      };
-      setTimeout(removeElements, delayMs);
-    }
-  };
-
-  // src/page/quiz.ts
-  var QuizPage = class {
-    constructor() {
-    }
-    setup() {
-    }
-    exec() {
-    }
-  };
-
-  // src/routes.ts
-  var routeDispatcher = () => {
-    var routeDispatcher2 = new RouteDispatcher(Site);
-    routeDispatcher2.routes = {
-      "/": HomePage,
-      "/quiz": QuizPage,
-      "/quiz-section": QuizPage
-    };
-    return routeDispatcher2;
-  };
 
   // src/sa5/layout.ts
   var ElementGroupController = class {
@@ -8265,37 +7898,6 @@
       }
     }
   };
-
-  // src/index.ts
-  var SITE_NAME = "Site";
-  initSSE();
-  var setup = () => {
-    console.log(`${SITE_NAME} package init v${VERSION}`);
-    routeDispatcher().setupRoute();
-  };
-  var exec = () => {
-    routeDispatcher().execRoute();
-    const components = document.querySelectorAll("[sse-component]");
-    components.forEach((element) => {
-      const componentValue = element.getAttribute("sse-component");
-      if (componentValue) {
-        switch (componentValue) {
-          case "quiz":
-            new QuizComponent().exec();
-            break;
-          default:
-            console.log("Unknown component:", componentValue);
-            break;
-        }
-      }
-    });
-  };
-  setup();
-  if (document.readyState !== "loading") {
-    exec();
-  } else {
-    document.addEventListener("DOMContentLoaded", exec);
-  }
 })();
 /*!
  * html2canvas 1.4.1 <https://html2canvas.hertzen.com>
@@ -8316,5 +7918,4 @@
     OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
     PERFORMANCE OF THIS SOFTWARE.
     ***************************************************************************** */
-/*! js-cookie v3.0.5 | MIT */
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=quiz.js.map

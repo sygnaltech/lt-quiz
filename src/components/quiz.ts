@@ -11,6 +11,7 @@ import { ElementGroupController } from "../sa5/layout";
 import { QuizData } from "../models/quiz-data";
 import { IPInfo } from "../ipinfo";
 import html2canvas from 'html2canvas';
+import { WebflowRadioButton } from "../sa5/radioButton";
 
 // [wfu-element] results      
 
@@ -20,6 +21,13 @@ import html2canvas from 'html2canvas';
 
 // [quiz-action]
 // download-result 
+
+enum QuizSlide {
+  WELCOME = 1,
+  QUIZ = 2,
+  FORM = 9,
+  RESULTS = 10, 
+}
 
 export class QuizComponent implements IRouteHandler {
 
@@ -98,29 +106,29 @@ export class QuizComponent implements IRouteHandler {
       this.elementGroupController.groups.get("result-text")?.show("low"); 
       this.elementGroupController.groups.get("result-chart")?.show("1"); 
 
-      sa5.push(['slideNextRequest', 
-        (slider: any, index: any) => {
-          console.log("SLIDE NEXT REQUEST", slider.name, slider, index); 
+      // sa5.push(['slideNextRequest', 
+      //   (slider: any, index: any) => {
+      //     console.log("SLIDE NEXT REQUEST", slider.name, slider, index); 
 
-          // Example usage:
-          // This will fetch the 3rd slide from the slider with the custom attribute 'wfu-slider="quiz"'
-          const slide = this.getSlideByPosition(index + 1);
-          if (slide) {
-              console.log('Slide found:', slide);
+      //     // Example usage:
+      //     // This will fetch the 3rd slide from the slider with the custom attribute 'wfu-slider="quiz"'
+      //     const slide = this.getSlideByPosition(index + 1);
+      //     if (slide) {
+      //         console.log('Slide found:', slide);
 
-            return this.checkRadioSelection(slide); 
+      //       return this.checkRadioSelection(slide); 
 
-          } else {
-              console.log('Slide not found.');
-          }
+      //     } else {
+      //         console.log('Slide not found.');
+      //     }
 
-          return (index < 6); 
-        }]); 
-      sa5.push(['slidePrevRequest', 
-        (slider: any, index: any) => {
-          console.log("SLIDE PREV REQUEST", slider.name, slider, index); 
-          return (index > 0); 
-        }]); 
+      //     return (index < 6); 
+      //   }]); 
+      // sa5.push(['slidePrevRequest', 
+      //   (slider: any, index: any) => {
+      //     console.log("SLIDE PREV REQUEST", slider.name, slider, index); 
+      //     return (index > 0); 
+      //   }]); 
 
       /**
        * Install Quiz actions
@@ -199,17 +207,33 @@ export class QuizComponent implements IRouteHandler {
 
     switch(actionValue) {
       case "back":
-        this.slider.prev();
+        if (this.slider.currentIndex > 0) 
+          this.slider.goToPrev();
         break;
       case "next":
+
+//      this.slider.currentIndex
+
+          const slide = this.getSlideByPosition(this.slider.currentIndex + 1);
+          if (slide) {
+              console.log('Slide found:', slide);
+
+            if (this.isRadioButtonSelectedInContainer(slide)) 
+              this.slider.goToNext();
+
+          } else {
+              console.log('Slide not found.');
+          }
+
         break;
       case "close":
         this.resetQuiz();
-        this.slider.currentNum = 1;
+        this.slider.currentNum = QuizSlide.WELCOME;
          
         break;
       case "restart":
         this.resetQuiz();
+        this.slider.currentNum = QuizSlide.QUIZ;
 
         break;
       case "download-result": 
@@ -232,7 +256,7 @@ export class QuizComponent implements IRouteHandler {
             if (form.checkValidity()) {
                 console.log('Form is valid');
                 // Optionally, you can submit the form or handle form data here
-                this.slider.currentNum = 10; 
+                this.slider.currentNum = QuizSlide.RESULTS; 
   //              form.submit();  // or handle the form data manually
             } else {
                 console.log('Form is not valid');
@@ -268,24 +292,27 @@ export class QuizComponent implements IRouteHandler {
   }
 
   resetQuiz() {
-    const radios = document.querySelectorAll<HTMLInputElement>('input[type="radio"]');
+//    const radios = document.querySelectorAll<HTMLInputElement>('input[type="radio"]');
+    const labels = document.querySelectorAll<HTMLLabelElement>('label.w-radio');
+
+    console.log("this.resetQuiz", labels.length);
 
     // Clear all radio buttons
-    for (let i = 0; i < radios.length; i++) {
-        radios[i].checked = false;
+    for (let i = 0; i < labels.length; i++) {
+
+
+    const radioButton = new WebflowRadioButton(labels[i]);
+//    radioButton.toggleCheck();
+
+      radioButton.checked = false;
     }
 
     // Change slide to position 1
-    this.slider.currentNum = 2;
-
-    // Hide form
-    // but do not clear
-
-    // Hide quiz results
+    this.slider.currentNum = QuizSlide.QUIZ;
 
   }
 
-  checkRadioSelection(container: HTMLElement): boolean {
+  isRadioButtonSelectedInContainer(container: HTMLElement): boolean {
     // Find all radio input elements within the given container
     const radios = container.querySelectorAll<HTMLInputElement>('input[type="radio"]');
 
