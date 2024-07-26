@@ -7494,7 +7494,7 @@
   });
 
   // src/version.ts
-  var VERSION = "0.1.5";
+  var VERSION = "0.1.6";
 
   // src/page/home.ts
   var HomePage = class {
@@ -8057,6 +8057,24 @@
     }
   };
 
+  // src/components/quiz-nav.ts
+  var QuizNavComponent = class {
+    constructor() {
+    }
+    showControls(back, close, restart, next) {
+      this.showControl("back", back);
+      this.showControl("close", close);
+      this.showControl("restart", restart);
+      this.showControl("next", next);
+    }
+    showControl(name, visible) {
+      const elements = document.querySelectorAll(`[quiz-nav] [quiz-action="${name}"]`);
+      elements.forEach((element) => {
+        element.hidden = !visible;
+      });
+    }
+  };
+
   // src/components/quiz.ts
   var QuizComponent = class {
     constructor() {
@@ -8064,6 +8082,79 @@
       this.data = QuizData.createWatchedObject((data, property, value) => {
         console.log(`Property ${String(property)} changed to ${value}`);
         this.updateDisplayData();
+      });
+      this.nav = new QuizNavComponent();
+    }
+    setup() {
+    }
+    exec() {
+      var _a, _b;
+      const sa5 = window["sa5"];
+      new IPInfo().init();
+      const formElem = document.querySelector("[wfu-form='quiz']");
+      if (formElem)
+        this.form = new sa5.Sa5Form(formElem);
+      const sliderElem = document.querySelector("[wfu-slider='quiz']");
+      if (sliderElem)
+        this.slider = new sa5.WebflowSlider(sliderElem);
+      this.setupEventListeners();
+      this.elementGroupController.init();
+      (_a = this.elementGroupController.groups.get("result-text")) == null ? void 0 : _a.show("low");
+      (_b = this.elementGroupController.groups.get("result-chart")) == null ? void 0 : _b.show("1");
+      this.nav.showControls(false, false, false, false);
+      sa5.push([
+        "slideChanged",
+        (slider, index) => {
+          switch (index + 1) {
+            case 1 /* WELCOME */:
+              this.nav.showControls(false, false, false, false);
+              break;
+            case 9 /* FORM */:
+              this.nav.showControls(true, true, true, false);
+              break;
+            case 10 /* RESULTS */:
+              this.nav.showControls(false, true, true, false);
+              break;
+            default:
+              this.nav.showControls(true, true, true, true);
+              break;
+          }
+          console.log("SLIDE CHANGED", slider.name, slider, index);
+          switch (slider.name) {
+            case "demo1":
+              break;
+            case "demo2":
+              break;
+          }
+        }
+      ]);
+      const elements = document.querySelectorAll("[quiz-action]");
+      elements.forEach((element) => {
+        const actionValue = element.getAttribute("quiz-action");
+        if (actionValue) {
+          element.addEventListener("click", () => {
+            this.actionFunction(actionValue);
+          });
+        }
+      });
+      const dataItemSources = document.querySelectorAll("[data-item-source]");
+      dataItemSources.forEach((elem) => {
+        const actionValue = elem.getAttribute("data-item-source");
+        if (actionValue) {
+          switch (elem.tagName.toLowerCase()) {
+            case "input":
+              const inputElem = elem;
+              elem.addEventListener("input", () => {
+                const av = actionValue;
+                if (av in this.data)
+                  this.updateProperty(av, inputElem.value);
+              });
+              break;
+            default:
+              console.error("data-item-source is only supported on input elements.");
+              break;
+          }
+        }
       });
     }
     updateDisplayData() {
@@ -8094,55 +8185,6 @@
       });
       (_a = this.elementGroupController.groups.get("result-chart")) == null ? void 0 : _a.show(this.data.score.toString());
       (_b = this.elementGroupController.groups.get("result-text")) == null ? void 0 : _b.show(this.data["score-category"]);
-    }
-    setup() {
-    }
-    exec() {
-      var _a, _b;
-      const sa5 = window["sa5"];
-      new IPInfo().init();
-      const formElem = document.querySelector("[wfu-form='quiz']");
-      console.log("form", formElem);
-      if (formElem)
-        this.form = new sa5.Sa5Form(formElem);
-      console.log("sa5 form", this.form);
-      this.form.setMode(0);
-      const sliderElem = document.querySelector("[wfu-slider='quiz']");
-      console.log("slider", sliderElem);
-      if (sliderElem)
-        this.slider = new sa5.WebflowSlider(sliderElem);
-      this.setupEventListeners();
-      this.elementGroupController.init();
-      (_a = this.elementGroupController.groups.get("result-text")) == null ? void 0 : _a.show("low");
-      (_b = this.elementGroupController.groups.get("result-chart")) == null ? void 0 : _b.show("1");
-      const elements = document.querySelectorAll("[quiz-action]");
-      elements.forEach((element) => {
-        const actionValue = element.getAttribute("quiz-action");
-        if (actionValue) {
-          element.addEventListener("click", () => {
-            this.actionFunction(actionValue);
-          });
-        }
-      });
-      const dataItemSources = document.querySelectorAll("[data-item-source]");
-      dataItemSources.forEach((elem) => {
-        const actionValue = elem.getAttribute("data-item-source");
-        if (actionValue) {
-          switch (elem.tagName.toLowerCase()) {
-            case "input":
-              const inputElem = elem;
-              elem.addEventListener("input", () => {
-                const av = actionValue;
-                if (av in this.data)
-                  this.updateProperty(av, inputElem.value);
-              });
-              break;
-            default:
-              console.error("data-item-source is only supported on input elements.");
-              break;
-          }
-        }
-      });
     }
     updateProperty(property, value) {
       this.data.setProperty(property, value);

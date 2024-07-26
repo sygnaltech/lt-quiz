@@ -12,6 +12,7 @@ import { QuizData } from "../models/quiz-data";
 import { IPInfo } from "../ipinfo";
 import html2canvas from 'html2canvas';
 import { WebflowRadioButton } from "../sa5/radioButton";
+import { QuizNavComponent as QuizNav } from "./quiz-nav";
 
 // [wfu-element] results      
 
@@ -35,6 +36,7 @@ export class QuizComponent implements IRouteHandler {
   data: QuizData;  
   slider: any;
   form: any; 
+  nav: QuizNav; 
 
   constructor() {
     this.elementGroupController = new ElementGroupController(); 
@@ -45,41 +47,8 @@ export class QuizComponent implements IRouteHandler {
       this.updateDisplayData();
     });
 
-  }
-
-
-  // Update all [data-item] tagged elements
-  // supports text elements and form input elements 
-  updateDisplayData() {
-    console.log('Current data:', this.data);
-
-    const dataElems: NodeListOf<HTMLElement> = document.querySelectorAll('[data-item]');
-    dataElems.forEach(elem => {
-
-      switch(elem.getAttribute("data-item")) {
-        case "score":
-          this.setElemData(elem, this.data.score.toString());
-          break;
-        case "percentage": case "probability":
-          const probability: number | null = this.data.probability;
-          if (probability) {
-              this.setElemData(elem, probability.toString()); 
-          }
-          break;
-        case "probability-display":
-          const percentage: string | null = this.data["probability-display"];
-          if (percentage) {
-            this.setElemData(elem, percentage); 
-          }
-          break;
-        case "first-name":
-          this.setElemData(elem, this.data["first-name"]); 
-      }
-
-    });
-
-    this.elementGroupController.groups.get("result-chart")?.show(this.data.score.toString()); 
-    this.elementGroupController.groups.get("result-text")?.show(this.data["score-category"]); 
+    // Instantiate quiz nav controller
+    this.nav = new QuizNav();  
 
   }
 
@@ -95,19 +64,18 @@ export class QuizComponent implements IRouteHandler {
     // Fetch and load IPInfo 
     (new IPInfo()).init();
 
-
     // Load the slider 
     const formElem: HTMLElement | null = document.querySelector<HTMLElement>("[wfu-form='quiz']"); 
-    console.log("form", formElem)
+//    console.log("form", formElem)
     if(formElem)
       this.form = new sa5.Sa5Form(formElem);
 
-    console.log("sa5 form", this.form); 
-this.form.setMode(0);
+//    console.log("sa5 form", this.form); 
+// this.form.setMode(0);
 
     // Load the slider 
     const sliderElem: HTMLElement | null = document.querySelector<HTMLElement>("[wfu-slider='quiz']"); 
-    console.log("slider", sliderElem)
+//    console.log("slider", sliderElem)
     if(sliderElem)
       this.slider = new sa5.WebflowSlider(sliderElem);
 
@@ -118,6 +86,40 @@ this.form.setMode(0);
     this.elementGroupController.init(); 
     this.elementGroupController.groups.get("result-text")?.show("low"); 
     this.elementGroupController.groups.get("result-chart")?.show("1"); 
+
+    // Hide all controls
+    this.nav.showControls(false, false, false, false);
+
+    sa5.push(['slideChanged', 
+      (slider: any, index: number) => {
+        
+        switch(index + 1) {
+          case QuizSlide.WELCOME:
+            this.nav.showControls(false, false, false, false);
+            break;
+          case QuizSlide.FORM: 
+            this.nav.showControls(true, true, true, false);
+            break;
+          case QuizSlide.RESULTS:
+            this.nav.showControls(false, true, true, false);
+            break;
+          default:
+            this.nav.showControls(true, true, true, true);
+            break;
+        }
+
+        console.log("SLIDE CHANGED", slider.name, slider, index); 
+    
+        switch(slider.name) {
+          case "demo1": // Demo 1 slide changed
+    
+            break;
+          case "demo2": // Demo 2 slide changed
+    
+            break;
+        }
+    
+      }]); 
 
       // sa5.push(['slideNextRequest', 
       //   (slider: any, index: any) => {
@@ -204,6 +206,41 @@ this.form.setMode(0);
 
         }
     });
+
+  }
+
+  // Update all [data-item] tagged elements
+  // supports text elements and form input elements 
+  updateDisplayData() {
+    console.log('Current data:', this.data);
+
+    const dataElems: NodeListOf<HTMLElement> = document.querySelectorAll('[data-item]');
+    dataElems.forEach(elem => {
+
+      switch(elem.getAttribute("data-item")) {
+        case "score":
+          this.setElemData(elem, this.data.score.toString());
+          break;
+        case "percentage": case "probability":
+          const probability: number | null = this.data.probability;
+          if (probability) {
+              this.setElemData(elem, probability.toString()); 
+          }
+          break;
+        case "probability-display":
+          const percentage: string | null = this.data["probability-display"];
+          if (percentage) {
+            this.setElemData(elem, percentage); 
+          }
+          break;
+        case "first-name":
+          this.setElemData(elem, this.data["first-name"]); 
+      }
+
+    });
+
+    this.elementGroupController.groups.get("result-chart")?.show(this.data.score.toString()); 
+    this.elementGroupController.groups.get("result-text")?.show(this.data["score-category"]); 
 
   }
 
