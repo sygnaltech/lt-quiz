@@ -7709,6 +7709,7 @@
   };
 
   // src/components/quiz.ts
+  var DOWNLOAD_FILENAME = "Lipedema_Team_Quiz_Result";
   var QuizComponent = class {
     constructor() {
       this.elementGroupController = new ElementGroupController();
@@ -7857,6 +7858,7 @@
       const form = document.querySelector("[wfu-form=quiz] > form");
       if (form) {
         if (form.checkValidity()) {
+          console.log("Form is valid");
           this.slider.currentNum = 10 /* RESULTS */;
         } else {
         }
@@ -7875,7 +7877,7 @@
       }).then((canvas) => {
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
-        link.download = "results.png";
+        link.download = `${DOWNLOAD_FILENAME}.png`;
         link.click();
       }).catch((error) => {
         console.error("Failed to capture element as PNG:", error);

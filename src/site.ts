@@ -19,7 +19,33 @@ export class Site implements IRouteHandler {
    
   }
 
+  fixEmailInputs(): void {
+
+        // Define the email pattern
+        // tested - https://codepen.io/memetican/pen/MWMmwMB/f0559d10aaebffb55ac0e1ae568d66d2 
+
+        // pattern = ^[A-Z0-9a-z._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,64}$
+        const emailPattern = "^[A-Z0-9a-z._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,64}$";
+
+        // Get all input elements
+        const inputs = document.querySelectorAll('input');
+    
+        // Iterate through each input element
+        inputs.forEach(input => {
+            // Check if the input type is 'email' or the name is 'email'
+            if (input.type === 'email' || input.name.toLowerCase() === 'email') {
+                // Set the pattern attribute
+                input.setAttribute('pattern', emailPattern); 
+                input.setAttribute('type', 'email'); 
+                input.setAttribute('title', 'Please enter a valid email'); 
+            }
+        });
+  }
+
   exec() {
+
+
+this.fixEmailInputs();
 
     // Put your site-level custom code here
     // it will have full access to the DOM 

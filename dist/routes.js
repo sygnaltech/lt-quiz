@@ -315,7 +315,19 @@
     setup() {
       Page.loadEngineCSS("site.css");
     }
+    fixEmailInputs() {
+      const emailPattern = "^[A-Z0-9a-z._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,64}$";
+      const inputs = document.querySelectorAll("input");
+      inputs.forEach((input) => {
+        if (input.type === "email" || input.name.toLowerCase() === "email") {
+          input.setAttribute("pattern", emailPattern);
+          input.setAttribute("type", "email");
+          input.setAttribute("title", "Please enter a valid email");
+        }
+      });
+    }
     exec() {
+      this.fixEmailInputs();
       this.removeWebflowBadge();
       this.setupLocaleSwitch();
       this.updateLocalIndicator();

@@ -30,6 +30,8 @@ enum QuizSlide {
   RESULTS = 10, 
 }
 
+const DOWNLOAD_FILENAME = "Lipedema_Team_Quiz_Result"; // will be PNG extension 
+
 export class QuizComponent implements IRouteHandler {
 
   elementGroupController: ElementGroupController;
@@ -65,7 +67,7 @@ export class QuizComponent implements IRouteHandler {
     // Fetch and load IPInfo 
     (new IPInfo()).init();
 
-    // Load the slider 
+    // Load the form 
     const formElem: HTMLElement | null = document.querySelector<HTMLElement>("[wfu-form='quiz']"); 
     if(formElem)
       this.form = new sa5.Sa5Form(formElem);
@@ -181,7 +183,6 @@ export class QuizComponent implements IRouteHandler {
               break;
           }
 
-
         }
     });
 
@@ -283,7 +284,7 @@ export class QuizComponent implements IRouteHandler {
 
             // Check if the form is valid
             if (form.checkValidity()) {
-  //              console.log('Form is valid');
+                console.log('Form is valid');
                 // Optionally, you can submit the form or handle form data here
                 this.slider.currentNum = QuizSlide.RESULTS; 
   //              form.submit();  // or handle the form data manually
@@ -312,7 +313,7 @@ export class QuizComponent implements IRouteHandler {
     }).then(canvas => {
         const link = document.createElement('a');
         link.href = canvas.toDataURL('image/png');
-        link.download = 'results.png';
+        link.download = `${DOWNLOAD_FILENAME}.png`;
         link.click();
     }).catch(error => {
         console.error('Failed to capture element as PNG:', error);

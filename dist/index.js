@@ -7494,7 +7494,7 @@
   });
 
   // src/version.ts
-  var VERSION = "0.1.6";
+  var VERSION = "0.1.7";
 
   // src/page/home.ts
   var HomePage = class {
@@ -7819,7 +7819,19 @@
     setup() {
       Page.loadEngineCSS("site.css");
     }
+    fixEmailInputs() {
+      const emailPattern = "^[A-Z0-9a-z._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,64}$";
+      const inputs = document.querySelectorAll("input");
+      inputs.forEach((input) => {
+        if (input.type === "email" || input.name.toLowerCase() === "email") {
+          input.setAttribute("pattern", emailPattern);
+          input.setAttribute("type", "email");
+          input.setAttribute("title", "Please enter a valid email");
+        }
+      });
+    }
     exec() {
+      this.fixEmailInputs();
       this.removeWebflowBadge();
       this.setupLocaleSwitch();
       this.updateLocalIndicator();
@@ -8118,6 +8130,7 @@
   };
 
   // src/components/quiz.ts
+  var DOWNLOAD_FILENAME = "Lipedema_Team_Quiz_Result";
   var QuizComponent = class {
     constructor() {
       this.elementGroupController = new ElementGroupController();
@@ -8266,6 +8279,7 @@
       const form = document.querySelector("[wfu-form=quiz] > form");
       if (form) {
         if (form.checkValidity()) {
+          console.log("Form is valid");
           this.slider.currentNum = 10 /* RESULTS */;
         } else {
         }
@@ -8284,7 +8298,7 @@
       }).then((canvas) => {
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
-        link.download = "results.png";
+        link.download = `${DOWNLOAD_FILENAME}.png`;
         link.click();
       }).catch((error) => {
         console.error("Failed to capture element as PNG:", error);
