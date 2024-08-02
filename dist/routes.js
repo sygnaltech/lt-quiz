@@ -327,7 +327,6 @@
       });
     }
     exec() {
-      this.fixEmailInputs();
       this.removeWebflowBadge();
       this.setupLocaleSwitch();
       this.updateLocalIndicator();

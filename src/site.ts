@@ -44,8 +44,7 @@ export class Site implements IRouteHandler {
 
   exec() {
 
-
-this.fixEmailInputs();
+//    this.fixEmailInputs();
 
     // Put your site-level custom code here
     // it will have full access to the DOM 
