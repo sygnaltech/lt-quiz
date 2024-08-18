@@ -1911,17 +1911,17 @@
           }
           this.trigger("segmentStart");
         };
-        AnimationItem.prototype.setSegment = function(init2, end) {
+        AnimationItem.prototype.setSegment = function(init, end) {
           var pendingFrame = -1;
           if (this.isPaused) {
-            if (this.currentRawFrame + this.firstFrame < init2) {
-              pendingFrame = init2;
+            if (this.currentRawFrame + this.firstFrame < init) {
+              pendingFrame = init;
             } else if (this.currentRawFrame + this.firstFrame > end) {
-              pendingFrame = end - init2;
+              pendingFrame = end - init;
             }
           }
-          this.firstFrame = init2;
-          this.totalFrames = end - init2;
+          this.firstFrame = init;
+          this.totalFrames = end - init;
           this.timeCompleted = this.totalFrames;
           if (pendingFrame !== -1) {
             this.goToAndStop(pendingFrame, true);
@@ -3299,15 +3299,15 @@
           var vertices = this.v;
           var outPoints = this.o;
           var inPoints = this.i;
-          var init2 = 0;
+          var init = 0;
           if (this.c) {
             newPath.setTripleAt(vertices[0][0], vertices[0][1], inPoints[0][0], inPoints[0][1], outPoints[0][0], outPoints[0][1], 0, false);
-            init2 = 1;
+            init = 1;
           }
           var cnt = this._length - 1;
           var len = this._length;
           var i;
-          for (i = init2; i < len; i += 1) {
+          for (i = init; i < len; i += 1) {
             newPath.setTripleAt(vertices[cnt][0], vertices[cnt][1], inPoints[cnt][0], inPoints[cnt][1], outPoints[cnt][0], outPoints[cnt][1], i, false);
             cnt -= 1;
           }
@@ -13957,21 +13957,21 @@
             function sourceRectAtTime() {
               return elem.sourceRectAtTime();
             }
-            function substring(init2, end) {
+            function substring(init, end) {
               if (typeof value === "string") {
                 if (end === void 0) {
-                  return value.substring(init2);
+                  return value.substring(init);
                 }
-                return value.substring(init2, end);
+                return value.substring(init, end);
               }
               return "";
             }
-            function substr(init2, end) {
+            function substr(init, end) {
               if (typeof value === "string") {
                 if (end === void 0) {
-                  return value.substr(init2);
+                  return value.substr(init);
                 }
-                return value.substr(init2, end);
+                return value.substr(init, end);
               }
               return "";
             }
@@ -15241,7 +15241,7 @@
           var outlineInterfaceFactory = function outlineInterfaceFactory2(elem2) {
             var currentPropertyName = "";
             var currentProperty = elem2.getFootageData();
-            function init2() {
+            function init() {
               currentPropertyName = "";
               currentProperty = elem2.getFootageData();
               return searchProperty;
@@ -15266,7 +15266,7 @@
               }
               return "";
             }
-            return init2;
+            return init;
           };
           var dataInterfaceFactory = function dataInterfaceFactory2(elem2) {
             function interfaceFunction(value2) {
@@ -16974,7 +16974,7 @@
       });
       observers.push(observer);
     };
-    const init2 = () => {
+    const init = () => {
       if (!swiper.params.observer)
         return;
       if (swiper.params.observeParents) {
@@ -17001,7 +17001,7 @@
       observeParents: false,
       observeSlideChildren: false
     });
-    on("init", init2);
+    on("init", init);
     on("destroy", destroy);
   }
   var eventsEmitter = {
@@ -20646,416 +20646,6 @@
       });
     }
   };
-
-  // src/page/home.ts
-  var HomePage = class {
-    constructor() {
-    }
-    setup() {
-    }
-    exec() {
-      AutoSwiper2xComponent.initializeAll();
-    }
-  };
-
-  // node_modules/@sygnal/sse/dist/page.js
-  var __awaiter = function(thisArg, _arguments, P, generator) {
-    function adopt(value2) {
-      return value2 instanceof P ? value2 : new P(function(resolve) {
-        resolve(value2);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value2) {
-        try {
-          step(generator.next(value2));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value2) {
-        try {
-          step(generator["throw"](value2));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
-  var Page = class {
-    static getQueryParam(name2) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(name2);
-    }
-    static loadScript(url) {
-      const script = document.createElement("script");
-      script.src = url;
-      document.body.appendChild(script);
-    }
-    static loadCSS(url) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = url;
-      document.head.appendChild(link);
-    }
-    static loadEngineCSS(cssFileName) {
-      let libPath = window.SSE.baseUrl;
-      const cssURL = `${libPath}/css/${cssFileName}`;
-      this.loadCSS(cssURL);
-    }
-    static loadStyle(css) {
-      const style = document.createElement("style");
-      style.innerText = css;
-      document.head.appendChild(style);
-    }
-    static replaceScriptSource(element, newSrc) {
-      element.src = newSrc;
-    }
-    static replaceCSSLink(element, newHref) {
-      element.href = newHref;
-    }
-    static prependToTitle(text2) {
-      document.title = `${text2}${document.title}`;
-    }
-    static getCurrentScriptUrl() {
-      if (document.currentScript) {
-        const currentScript = document.currentScript;
-        return currentScript.src;
-      }
-      console.error("document.currentScript is not supported in this browser.");
-      return null;
-    }
-    static getCurrentScriptBaseUrl() {
-      const currentScript = document.currentScript;
-      if (currentScript) {
-        const scriptURL = new URL(currentScript.src);
-        const origin = scriptURL.origin;
-        const path = scriptURL.pathname.substring(0, scriptURL.pathname.lastIndexOf("/"));
-        const baseURL = `${origin}${path}`;
-        return baseURL;
-      } else {
-        console.error("Unable to determine the currently executing script.");
-      }
-      return void 0;
-    }
-    static findAncestorWithAttribute(element, attributeName) {
-      let currentElement = element;
-      while (currentElement) {
-        if (currentElement.hasAttribute(attributeName)) {
-          return currentElement;
-        }
-        currentElement = currentElement.parentElement;
-      }
-      return null;
-    }
-    static getAncestorAttributeValue(element, attributeName) {
-      let currentElement = element;
-      while (currentElement) {
-        if (currentElement.hasAttribute(attributeName)) {
-          return currentElement.getAttribute(attributeName);
-        }
-        currentElement = currentElement.parentElement;
-      }
-      return null;
-    }
-    static hasAncestorWithAttribute(element, attributeName) {
-      return this.findAncestorWithAttribute(element, attributeName) !== null;
-    }
-    static convertToPixels(value2, contextElement = document.documentElement) {
-      const match = value2.match(/^(-?\d+\.?\d*)(rem|em|px|vh|vw|%)$/);
-      if (!match)
-        throw new Error("Invalid value format");
-      const [, amountStr, unit] = match;
-      const amount = parseFloat(amountStr);
-      switch (unit) {
-        case "px":
-          return amount;
-        case "rem":
-          return amount * parseFloat(getComputedStyle(document.documentElement).fontSize);
-        case "em":
-          return amount * parseFloat(getComputedStyle(contextElement).fontSize);
-        case "vh":
-          return amount * window.innerHeight / 100;
-        case "vw":
-          return amount * window.innerWidth / 100;
-        case "%":
-          return amount * contextElement.clientWidth / 100;
-        default:
-          throw new Error("Unsupported unit");
-      }
-    }
-    static getResponseHeader(headerName_1) {
-      return __awaiter(this, arguments, void 0, function* (headerName, url = void 0) {
-        const headers = yield this.getResponseHeaders(url);
-        if (!headers)
-          return void 0;
-        if (!headers.has(headerName))
-          return void 0;
-        return headers.get(headerName) || void 0;
-      });
-    }
-    static getResponseHeaders() {
-      return __awaiter(this, arguments, void 0, function* (url = void 0) {
-        try {
-          if (!url) {
-            url = window.location.href;
-          }
-          const response = yield fetch(url, {
-            method: "HEAD"
-          });
-          return response.headers;
-        } catch (error) {
-          console.error("Error checking reverse proxy header:", error);
-        }
-        return void 0;
-      });
-    }
-  };
-
-  // node_modules/js-cookie/dist/js.cookie.mjs
-  function assign(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-      for (var key2 in source) {
-        target[key2] = source[key2];
-      }
-    }
-    return target;
-  }
-  var defaultConverter = {
-    read: function(value2) {
-      if (value2[0] === '"') {
-        value2 = value2.slice(1, -1);
-      }
-      return value2.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
-    },
-    write: function(value2) {
-      return encodeURIComponent(value2).replace(
-        /%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,
-        decodeURIComponent
-      );
-    }
-  };
-  function init(converter, defaultAttributes) {
-    function set(name2, value2, attributes) {
-      if (typeof document === "undefined") {
-        return;
-      }
-      attributes = assign({}, defaultAttributes, attributes);
-      if (typeof attributes.expires === "number") {
-        attributes.expires = new Date(Date.now() + attributes.expires * 864e5);
-      }
-      if (attributes.expires) {
-        attributes.expires = attributes.expires.toUTCString();
-      }
-      name2 = encodeURIComponent(name2).replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent).replace(/[()]/g, escape);
-      var stringifiedAttributes = "";
-      for (var attributeName in attributes) {
-        if (!attributes[attributeName]) {
-          continue;
-        }
-        stringifiedAttributes += "; " + attributeName;
-        if (attributes[attributeName] === true) {
-          continue;
-        }
-        stringifiedAttributes += "=" + attributes[attributeName].split(";")[0];
-      }
-      return document.cookie = name2 + "=" + converter.write(value2, name2) + stringifiedAttributes;
-    }
-    function get(name2) {
-      if (typeof document === "undefined" || arguments.length && !name2) {
-        return;
-      }
-      var cookies = document.cookie ? document.cookie.split("; ") : [];
-      var jar = {};
-      for (var i = 0; i < cookies.length; i++) {
-        var parts = cookies[i].split("=");
-        var value2 = parts.slice(1).join("=");
-        try {
-          var found = decodeURIComponent(parts[0]);
-          jar[found] = converter.read(value2, found);
-          if (name2 === found) {
-            break;
-          }
-        } catch (e) {
-        }
-      }
-      return name2 ? jar[name2] : jar;
-    }
-    return Object.create(
-      {
-        set,
-        get,
-        remove: function(name2, attributes) {
-          set(
-            name2,
-            "",
-            assign({}, attributes, {
-              expires: -1
-            })
-          );
-        },
-        withAttributes: function(attributes) {
-          return init(this.converter, assign({}, this.attributes, attributes));
-        },
-        withConverter: function(converter2) {
-          return init(assign({}, this.converter, converter2), this.attributes);
-        }
-      },
-      {
-        attributes: { value: Object.freeze(defaultAttributes) },
-        converter: { value: Object.freeze(converter) }
-      }
-    );
-  }
-  var api = init(defaultConverter, { path: "/" });
-
-  // node_modules/@sygnal/sse/dist/routeDispatcher.js
-  var RouteDispatcher = class {
-    constructor(SiteClass) {
-      this._SiteClass = SiteClass;
-    }
-    matchRoute(path) {
-      for (const route in this.routes) {
-        if (route.endsWith("*")) {
-          const baseRoute = route.slice(0, -1);
-          if (path.startsWith(baseRoute)) {
-            return this.routes[route];
-          }
-        } else if (route === path) {
-          return this.routes[route];
-        }
-      }
-      return null;
-    }
-    setupRoute() {
-      const site = new this._SiteClass();
-      site.setup();
-      const path = window.location.pathname;
-      const HandlerClass = this.matchRoute(path);
-      if (HandlerClass) {
-        const handlerInstance = new HandlerClass();
-        handlerInstance.setup();
-      } else {
-      }
-    }
-    execRoute() {
-      const site = new this._SiteClass();
-      site.exec();
-      const path = window.location.pathname;
-      const HandlerClass = this.matchRoute(path);
-      if (HandlerClass) {
-        const handlerInstance = new HandlerClass();
-        handlerInstance.exec();
-      } else {
-      }
-    }
-  };
-
-  // src/site.ts
-  var Site = class {
-    constructor() {
-    }
-    setup() {
-      Page.loadEngineCSS("site.css");
-    }
-    fixEmailInputs() {
-      const emailPattern = "^[A-Z0-9a-z._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,64}$";
-      const inputs = document.querySelectorAll("input");
-      inputs.forEach((input) => {
-        if (input.type === "email" || input.name.toLowerCase() === "email") {
-          input.setAttribute("pattern", emailPattern);
-          input.setAttribute("type", "email");
-          input.setAttribute("title", "Please enter a valid email");
-        }
-      });
-    }
-    exec() {
-      this.removeWebflowBadge();
-      this.setupLocaleSwitch();
-      this.updateLocalIndicator();
-    }
-    updateLocalIndicator() {
-      const elements = document.querySelectorAll(".lang-toggle-box");
-      if (elements.length === 0) {
-        console.error("No elements with class lang-toggle-box found");
-        return;
-      }
-      elements.forEach((element) => {
-        switch (document.documentElement.lang) {
-          case "en":
-            console.log("indicator", document.documentElement.lang);
-            element.removeAttribute("style");
-            break;
-          case "es":
-            console.log("indicator", document.documentElement.lang, element);
-            element.style.display = "flex";
-            element.style.justifyContent = "flex-end";
-            break;
-        }
-      });
-    }
-    setupLocaleSwitch() {
-      const handleClick = (locale) => {
-        console.log(`Locale switch to: ${locale}`);
-        const element = document.querySelector(`[sse-locale-switch-to="${locale}"]`);
-        if (element) {
-          console.log("Element found:", element);
-          element.click();
-        } else {
-          console.error('Element with custom attribute sse-locale-switch-to="en" not found');
-        }
-      };
-      const elements = document.querySelectorAll("[sse-locale-switch]");
-      elements.forEach((element) => {
-        const locale = element.getAttribute("sse-locale-switch");
-        console.log("installing locale switch", locale);
-        if (locale) {
-          element.addEventListener("click", () => handleClick(locale));
-        } else {
-          console.error("Element missing `sse-Locale-switch` attribute value");
-        }
-      });
-    }
-    removeWebflowBadge(delayMs = 1e3) {
-      const removeElements = () => {
-        const elements = document.querySelectorAll(".w-webflow-badge");
-        if (elements.length > 0) {
-          elements.forEach((element) => {
-            var _a;
-            (_a = element.parentElement) == null ? void 0 : _a.removeChild(element);
-          });
-        } else {
-        }
-      };
-      setTimeout(removeElements, delayMs);
-    }
-  };
-
-  // src/page/quiz.ts
-  var QuizPage = class {
-    constructor() {
-    }
-    setup() {
-    }
-    exec() {
-    }
-  };
-
-  // src/routes.ts
-  var routeDispatcher = () => {
-    var routeDispatcher2 = new RouteDispatcher(Site);
-    routeDispatcher2.routes = {
-      "/": HomePage,
-      "/quiz": QuizPage,
-      "/quiz-section": QuizPage
-    };
-    return routeDispatcher2;
-  };
 })();
 /*!
  Transformation Matrix v2.0
@@ -21065,5 +20655,4 @@
  Contributions by leeoniya.
  License: MIT, header required.
  */
-/*! js-cookie v3.0.5 | MIT */
-//# sourceMappingURL=routes.js.map
+//# sourceMappingURL=auto-swiper-2x.js.map
