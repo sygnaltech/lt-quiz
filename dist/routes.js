@@ -1460,7 +1460,7 @@
           }
           return _typeof$4(obj);
         }
-        var AnimationItem = function AnimationItem2() {
+        var AnimationItem = function AnimationItem3() {
           this._cbs = [];
           this.name = "";
           this.path = "";
@@ -20579,7 +20579,7 @@
   };
 
   // src/components/auto-swiper-2x.ts
-  var SWIPER2X = "se-sswiper2x";
+  var SWIPER2X = "sse-swiper2x";
   var SWIPER2X_FEATUREDIMAGE = "sse-swiper2x-image";
   var SWIPER2X_SWIPER = "sse-swiper2x-swiper";
   var SWIPER2X_AUTONEXTBUTTON = "sse-swiper2x-autobutton";
@@ -20956,6 +20956,63 @@
     }
   };
 
+  // src/components/lottie.ts
+  var import_lottie_web2 = __toESM(require_lottie());
+  var LOTTIE = "wfu-lottie";
+  var LottieComponent = class {
+    constructor(elem2) {
+      this.elem = elem2;
+      this.src = this.elem.getAttribute("data-src") || "";
+      this.loop = this.elem.getAttribute("data-loop") === "1";
+      this.direction = parseInt(this.elem.getAttribute("data-direction") || "1", 10);
+      this.autoplay = this.elem.getAttribute("data-autoplay") === "1";
+      this.renderer = this.elem.getAttribute("data-renderer") || "svg";
+      this.defaultDuration = parseFloat(this.elem.getAttribute("data-default-duration") || "0");
+      this.duration = parseFloat(this.elem.getAttribute("data-duration") || "0");
+      this.elem.removeAttribute("data-animation-type");
+      this.elem.removeAttribute("data-autoplay");
+    }
+    init() {
+      this.animation = import_lottie_web2.default.loadAnimation({
+        container: this.elem,
+        renderer: this.renderer,
+        loop: this.loop,
+        autoplay: false,
+        path: this.src
+      });
+      this.animation.setDirection(this.direction);
+      if (this.duration) {
+        const frameRate = this.animation.getDuration(true);
+        const totalFrames = this.animation.totalFrames;
+        const calculatedSpeed = totalFrames / frameRate / this.duration;
+        this.animation.setSpeed(calculatedSpeed);
+      }
+      this.animation.stop();
+    }
+  };
+  var LottieComponentController = class {
+    constructor() {
+      this.lotties = /* @__PURE__ */ new Map();
+    }
+    init() {
+      const elements = document.querySelectorAll(`[${LOTTIE}]`);
+      elements.forEach((element) => {
+        const lottieId = element.getAttribute(LOTTIE);
+        if (lottieId) {
+          const lottie4 = new LottieComponent(element);
+          lottie4.init();
+          this.lotties.set(lottieId, lottie4);
+          console.log("found lottie", lottieId);
+        }
+      });
+      window.Webflow.require("lottie").destroy();
+      window.Webflow.require("lottie").init();
+    }
+    getLottieById(id) {
+      return this.lotties.get(id);
+    }
+  };
+
   // src/site.ts
   var Site = class {
     constructor() {
@@ -20975,11 +21032,13 @@
       });
     }
     exec() {
+      const lc = new LottieComponentController();
+      lc.init();
       this.removeWebflowBadge();
       this.setupLocaleSwitch();
-      this.updateLocalIndicator();
+      this.updateLocaleIndicator();
     }
-    updateLocalIndicator() {
+    updateLocaleIndicator() {
       const elements = document.querySelectorAll(".lang-toggle-box");
       if (elements.length === 0) {
         console.error("No elements with class lang-toggle-box found");

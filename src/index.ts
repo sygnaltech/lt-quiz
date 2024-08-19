@@ -41,6 +41,12 @@ declare global {
         // Site global data
         Site: SiteGlobalDataType;
 
+        Webflow: {
+            require: (module: string) => {
+                destroy: () => void; 
+                init: () => void;
+            };
+          };
     }
 }
 

@@ -17,7 +17,7 @@ import 'swiper/swiper-bundle.css';
 import { TimedLottieComponent } from './timed-lottie';
 
 
-const SWIPER2X = "se-sswiper2x";
+const SWIPER2X = "sse-swiper2x";
 const SWIPER2X_FEATUREDIMAGE = "sse-swiper2x-image";
 const SWIPER2X_SWIPER = "sse-swiper2x-swiper";
 const SWIPER2X_AUTONEXTBUTTON = "sse-swiper2x-autobutton";

@@ -20579,7 +20579,7 @@
   };
 
   // src/components/auto-swiper-2x.ts
-  var SWIPER2X = "se-sswiper2x";
+  var SWIPER2X = "sse-swiper2x";
   var SWIPER2X_FEATUREDIMAGE = "sse-swiper2x-image";
   var SWIPER2X_SWIPER = "sse-swiper2x-swiper";
   var SWIPER2X_AUTONEXTBUTTON = "sse-swiper2x-autobutton";
