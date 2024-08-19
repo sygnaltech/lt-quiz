@@ -117,21 +117,7 @@ export class LottieComponent {
             this.onLoopComplete(this); // Call the callback even if the animation doesn't loop
           }
         });
-        
 
-//     // Set the direction if specified
-//     this.animation.setDirection(this.direction);
-
-//     // Set duration if necessary
-//     if (this.duration) {
-//       const frameRate = this.animation.getDuration(true);
-//       const totalFrames = this.animation.totalFrames;
-//       const calculatedSpeed = (totalFrames / frameRate) / this.duration;
-//       this.animation.setSpeed(calculatedSpeed);
-//     }
-// // this.animation.stop(); 
-
-// this.animation.play();
   }
 
   play(restart: boolean = false) {

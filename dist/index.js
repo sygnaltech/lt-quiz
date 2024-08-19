@@ -29114,7 +29114,6 @@
         "accordionChanged",
         (accordion, index2) => {
           var _a, _b, _c, _d, _e, _f, _g, _h, _i;
-          console.log("ACCORDION CHANGED", accordion.items[index2].name, accordion, index2);
           switch (accordion.items[index2].name) {
             case "item1":
               (_a = lc.lotties.get("1")) == null ? void 0 : _a.play();
@@ -29139,7 +29138,6 @@
         console.log("loop completed:", lottieInstance.name);
         switch (lottieInstance.name) {
           case "1":
-            console.log("changing accordion to 2", this.accordion.name);
             this.accordion.currentNum = 2;
             break;
           case "2":
