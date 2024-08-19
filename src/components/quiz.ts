@@ -12,7 +12,7 @@ import { QuizData } from "../models/quiz-data";
 import { IPInfo } from "../ipinfo";
 import html2canvas from 'html2canvas';
 import { WebflowRadioButton } from "../sa5/radioButton";
-import { QuizNavComponent as QuizNav } from "./quiz-nav";
+import { QuizNavComponent as QuizNav } from "../elements/quiz-nav";
 
 // [wfu-element] results      
 
@@ -34,13 +34,17 @@ const DOWNLOAD_FILENAME = "Lipedema_Team_Quiz_Result"; // will be PNG extension
 
 export class QuizComponent implements IRouteHandler {
 
+  elem: HTMLElement;
+
   elementGroupController: ElementGroupController;
   data: QuizData;  
   slider: any;
   form: any; 
   nav: QuizNav; 
 
-  constructor() {
+  constructor(elem: HTMLElement) {
+    this.elem = elem; 
+
     this.elementGroupController = new ElementGroupController(); 
 
     // Create a reactive data object for page updates 

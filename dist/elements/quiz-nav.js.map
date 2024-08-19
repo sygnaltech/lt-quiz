@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/elements/quiz-nav.ts"],
+  "sourcesContent": ["\n/** \n * Component | Quiz Nav\n * Simple controller for quiz navigation bar\n */\n\n\nexport class QuizNavComponent {\n\n  constructor() {\n  }\n\n  /**\n   * Specify which nav controls to show or hide\n   * @param back \n   * @param close \n   * @param restart \n   * @param next \n   */\n  showControls(back: boolean, close: boolean, restart: boolean, next: boolean) {\n\n    this.showControl(\"back\", back);\n    this.showControl(\"close\", close);\n    this.showControl(\"restart\", restart);\n    this.showControl(\"next\", next);\n\n  }\n\n  private showControl(name: string, visible: boolean) {\n\n    const elements = document.querySelectorAll<HTMLElement>(`[quiz-nav] [quiz-action=\"${name}\"]`);\n    elements.forEach(element => {\n        element.hidden = !visible; \n    });\n\n  }\n\n}"],
+  "mappings": ";;;AAOO,MAAM,mBAAN,MAAuB;AAAA,IAE5B,cAAc;AAAA,IACd;AAAA,IASA,aAAa,MAAe,OAAgB,SAAkB,MAAe;AAE3E,WAAK,YAAY,QAAQ,IAAI;AAC7B,WAAK,YAAY,SAAS,KAAK;AAC/B,WAAK,YAAY,WAAW,OAAO;AACnC,WAAK,YAAY,QAAQ,IAAI;AAAA,IAE/B;AAAA,IAEQ,YAAY,MAAc,SAAkB;AAElD,YAAM,WAAW,SAAS,iBAA8B,4BAA4B,QAAQ;AAC5F,eAAS,QAAQ,aAAW;AACxB,gBAAQ,SAAS,CAAC;AAAA,MACtB,CAAC;AAAA,IAEH;AAAA,EAEF;",
+  "names": []
+}

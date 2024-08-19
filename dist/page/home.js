@@ -20552,7 +20552,7 @@
   });
   Swiper.use([Resize, Observer]);
 
-  // src/components/timed-lottie.ts
+  // src/elements/timed-lottie.ts
   var import_lottie_web = __toESM(require_lottie());
   var TimedLottieComponent = class {
     constructor(config, onLoopComplete) {

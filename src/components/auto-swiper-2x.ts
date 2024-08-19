@@ -14,7 +14,7 @@
 import { initSSE } from '@sygnal/sse';
 import Swiper from 'swiper';
 import 'swiper/swiper-bundle.css';
-import { TimedLottieComponent } from './timed-lottie';
+import { TimedLottieComponent } from '../elements/timed-lottie';
 
 
 const SWIPER2X = "sse-swiper2x";

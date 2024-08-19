@@ -16354,14 +16354,15 @@
   var LottieComponent = class {
     constructor(elem2) {
       this.elem = elem2;
+      this.name = elem2.getAttribute(LOTTIE) || void 0;
       this.src = this.elem.getAttribute("data-src") || "";
       this.loop = this.elem.getAttribute("data-loop") === "1";
       this.direction = parseInt(this.elem.getAttribute("data-direction") || "1", 10);
-      this.autoplay = this.elem.getAttribute("data-autoplay") === "1";
+      this._wfAutoplay = this.elem.getAttribute("data-autoplay") === "1";
       this.renderer = this.elem.getAttribute("data-renderer") || "svg";
       this.defaultDuration = parseFloat(this.elem.getAttribute("data-default-duration") || "0");
       this.duration = parseFloat(this.elem.getAttribute("data-duration") || "0");
-      this.customAutoplay = this.elem.getAttribute(LOTTIE_AUTOPLAY) === "true";
+      this.autoplay = this.elem.getAttribute(LOTTIE_AUTOPLAY) === "true";
       this.elem.removeAttribute("data-animation-type");
       this.elem.removeAttribute("data-autoplay");
     }
@@ -16373,9 +16374,46 @@
         container: this.elem,
         renderer: this.renderer,
         loop: this.loop,
-        autoplay: this.customAutoplay,
+        autoplay: this.autoplay,
         path: this.src
       });
+      this.animation.addEventListener("data_ready", () => {
+        var _a;
+        var totalFrames = this.animation.totalFrames;
+        var frameRate = this.animation.frameRate;
+        var animationDuration = totalFrames / frameRate;
+        var requiredSpeed = animationDuration / this.duration;
+        (_a = this.animation) == null ? void 0 : _a.setSpeed(requiredSpeed);
+        console.log("Animation Total Frames:", totalFrames);
+        console.log("Frame Rate:", frameRate, "fps");
+        console.log("Animation Duration:", animationDuration, "seconds");
+        console.log("Setting Speed to:", requiredSpeed);
+      });
+      this.animation.addEventListener("loopComplete", () => {
+        if (this.onLoopComplete) {
+          this.onLoopComplete(this);
+        }
+      });
+      this.animation.addEventListener("complete", () => {
+        if (this.onLoopComplete) {
+          this.onLoopComplete(this);
+        }
+      });
+    }
+    play() {
+      if (this.animation) {
+        this.animation.play();
+      }
+    }
+    pause() {
+      if (this.animation) {
+        this.animation.pause();
+      }
+    }
+    stop() {
+      if (this.animation) {
+        this.animation.stop();
+      }
     }
   };
   var LottieComponentController = class {
@@ -16384,10 +16422,15 @@
     }
     init() {
       const elements = document.querySelectorAll(`[${LOTTIE}]`);
-      elements.forEach((element) => {
+      elements.forEach((element, onLoopComplete) => {
         const lottieId = element.getAttribute(LOTTIE);
         if (lottieId) {
           const lottie3 = new LottieComponent(element);
+          lottie3.onLoopComplete = (lottieInstance) => {
+            if (this.onLoopComplete) {
+              this.onLoopComplete(lottieInstance);
+            }
+          };
           lottie3.init();
           this.lotties.set(lottieId, lottie3);
           console.log("found lottie", lottieId);

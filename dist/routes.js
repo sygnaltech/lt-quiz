@@ -1460,7 +1460,7 @@
           }
           return _typeof$4(obj);
         }
-        var AnimationItem = function AnimationItem3() {
+        var AnimationItem = function AnimationItem2() {
           this._cbs = [];
           this.name = "";
           this.path = "";
@@ -20552,7 +20552,7 @@
   });
   Swiper.use([Resize, Observer]);
 
-  // src/components/timed-lottie.ts
+  // src/elements/timed-lottie.ts
   var import_lottie_web = __toESM(require_lottie());
   var TimedLottieComponent = class {
     constructor(config, onLoopComplete) {
@@ -20956,58 +20956,6 @@
     }
   };
 
-  // src/components/lottie.ts
-  var import_lottie_web2 = __toESM(require_lottie());
-  var LOTTIE = "wfu-lottie";
-  var LOTTIE_AUTOPLAY = "wfu-lottie-autoplay";
-  var LottieComponent = class {
-    constructor(elem2) {
-      this.elem = elem2;
-      this.src = this.elem.getAttribute("data-src") || "";
-      this.loop = this.elem.getAttribute("data-loop") === "1";
-      this.direction = parseInt(this.elem.getAttribute("data-direction") || "1", 10);
-      this.autoplay = this.elem.getAttribute("data-autoplay") === "1";
-      this.renderer = this.elem.getAttribute("data-renderer") || "svg";
-      this.defaultDuration = parseFloat(this.elem.getAttribute("data-default-duration") || "0");
-      this.duration = parseFloat(this.elem.getAttribute("data-duration") || "0");
-      this.customAutoplay = this.elem.getAttribute(LOTTIE_AUTOPLAY) === "true";
-      this.elem.removeAttribute("data-animation-type");
-      this.elem.removeAttribute("data-autoplay");
-    }
-    init() {
-      while (this.elem.firstChild) {
-        this.elem.removeChild(this.elem.firstChild);
-      }
-      this.animation = import_lottie_web2.default.loadAnimation({
-        container: this.elem,
-        renderer: this.renderer,
-        loop: this.loop,
-        autoplay: this.customAutoplay,
-        path: this.src
-      });
-    }
-  };
-  var LottieComponentController = class {
-    constructor() {
-      this.lotties = /* @__PURE__ */ new Map();
-    }
-    init() {
-      const elements = document.querySelectorAll(`[${LOTTIE}]`);
-      elements.forEach((element) => {
-        const lottieId = element.getAttribute(LOTTIE);
-        if (lottieId) {
-          const lottie4 = new LottieComponent(element);
-          lottie4.init();
-          this.lotties.set(lottieId, lottie4);
-          console.log("found lottie", lottieId);
-        }
-      });
-    }
-    getLottieById(id) {
-      return this.lotties.get(id);
-    }
-  };
-
   // src/site.ts
   var Site = class {
     constructor() {
@@ -21027,8 +20975,6 @@
       });
     }
     exec() {
-      const lc = new LottieComponentController();
-      lc.init();
       this.removeWebflowBadge();
       this.setupLocaleSwitch();
       this.updateLocaleIndicator();

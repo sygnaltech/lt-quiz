@@ -7690,7 +7690,7 @@
     }
   };
 
-  // src/components/quiz-nav.ts
+  // src/elements/quiz-nav.ts
   var QuizNavComponent = class {
     constructor() {
     }
@@ -7711,7 +7711,8 @@
   // src/components/quiz.ts
   var DOWNLOAD_FILENAME = "Lipedema_Team_Quiz_Result";
   var QuizComponent = class {
-    constructor() {
+    constructor(elem) {
+      this.elem = elem;
       this.elementGroupController = new ElementGroupController();
       this.data = QuizData.createWatchedObject((data, property, value) => {
         console.log(`Property ${String(property)} changed to ${value}`);

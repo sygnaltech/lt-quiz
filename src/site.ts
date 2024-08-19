@@ -1,10 +1,9 @@
 
 /*
  * Site
- */
+ */ 
 
 import { IRouteHandler, Page } from "@sygnal/sse";
-import { LottieComponentController } from "./components/lottie";
 
 // import gsap from 'gsap'; 
  
@@ -50,8 +49,6 @@ export class Site implements IRouteHandler {
     // Put your site-level custom code here
     // it will have full access to the DOM 
 
-    const lc: LottieComponentController = new LottieComponentController();
-    lc.init(); 
 
     this.removeWebflowBadge(); 
 

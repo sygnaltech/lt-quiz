@@ -14,6 +14,8 @@ import { VERSION } from "./version";
 import { routeDispatcher } from "./routes";
 import { initSSE } from "@sygnal/sse"; 
 import { QuizComponent } from "./components/quiz";
+import { PatientsJourneyComponent } from "./components/patient-journey";
+import { AutoSwiper2xComponent } from "./components/auto-swiper-2x";
 
 interface SiteGlobalDataType {
     // Define properties and their types for SiteDataType
@@ -47,6 +49,10 @@ declare global {
                 init: () => void;
             };
           };
+
+        sa5: any;
+//        sa5: Array<[string, (accordion: any, index: number) => void]>;
+
     }
 }
 
@@ -69,8 +75,8 @@ const exec = () => {
     routeDispatcher().execRoute(); 
 
     // Components
-    const components = document.querySelectorAll('[sse-component]');
-    components.forEach(element => {
+    const components = document.querySelectorAll<HTMLElement>('[sse-component]');
+    components.forEach(element=> {
         // Get the value of the SSE-component attribute
         const componentValue = element.getAttribute('sse-component');
         
@@ -79,7 +85,17 @@ const exec = () => {
             switch (componentValue) {
                 case 'quiz':
 
-                    (new QuizComponent()).exec();
+                    (new QuizComponent(element)).exec();
+
+                    break;
+                case 'patients-journey':
+
+                    (new PatientsJourneyComponent(element)).init(); 
+
+                    break;
+                case 'swiper-2x':
+
+                    (new AutoSwiper2xComponent(element)).init(); 
 
                     break;
                 default:

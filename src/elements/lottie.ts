@@ -21,31 +21,35 @@ export class LottieComponent {
   // animation: any; // Replace `any` with the correct Lottie type if available
   // durationSec: number = 4;
   // onLoopComplete?: () => void;
+  name?: string;
   elem: HTMLElement;
   src: string;
   loop: boolean;
   direction: AnimationDirection;
-  autoplay: boolean;
+  _wfAutoplay: boolean;
   renderer: string;
   defaultDuration: number;
   duration: number;
   animation?: AnimationItem;
-  customAutoplay: boolean; // New custom autoplay attribute
-
+  autoplay: boolean; // New custom autoplay attribute
+  onLoopComplete?: (lottieInstance: LottieComponent) => void;
 
   constructor(elem: HTMLElement) { 
 
     this.elem = elem; 
 
+    this.name = elem.getAttribute(LOTTIE) || undefined; 
+
     // Capture relevant data attributes
     this.src = this.elem.getAttribute('data-src') || '';
     this.loop = this.elem.getAttribute('data-loop') === '1';
-    this.direction = parseInt(this.elem.getAttribute('data-direction') || '1', 10) as AnimationDirection;
-    this.autoplay = this.elem.getAttribute('data-autoplay') === '1';
+    this.direction = parseInt(this.elem.getAttribute('data-direction') || '1', 10) as AnimationDirection; 
+    // This is not configuragle in Webflow settings, so we capture it but otherwise it's meaningless 
+    this._wfAutoplay = this.elem.getAttribute('data-autoplay') === '1';
     this.renderer = this.elem.getAttribute('data-renderer') || 'svg';
     this.defaultDuration = parseFloat(this.elem.getAttribute('data-default-duration') || '0');
     this.duration = parseFloat(this.elem.getAttribute('data-duration') || '0'); 
-    this.customAutoplay = this.elem.getAttribute(LOTTIE_AUTOPLAY) === 'true'; // Capture custom autoplay attribute
+    this.autoplay = this.elem.getAttribute(LOTTIE_AUTOPLAY) === 'true'; // Capture custom autoplay attribute
 
     // Remove Webflow's data attribute to prevent it from taking over the Lottie initialization
     this.elem.removeAttribute('data-animation-type');
@@ -54,23 +58,6 @@ export class LottieComponent {
     // this.animation = lottie.loadAnimation(config);
     // this.onLoopComplete = onLoopComplete;
 
-    // this.animation.addEventListener('data_ready', () => {
-    //   // Calculate the animation duration in seconds
-    //   var totalFrames = this.animation.totalFrames;
-    //   var frameRate = this.animation.frameRate;
-    //   var animationDuration = totalFrames / frameRate; // Total duration in seconds
-
-    //   // Calculate the required speed to make the animation duration 4 seconds
-    //   var requiredSpeed = animationDuration / this.durationSec;
-
-    //   // Set the calculated speed
-    //   this.animation.setSpeed(requiredSpeed);
-
-    //   console.log('Animation Total Frames:', totalFrames);
-    //   console.log('Frame Rate:', frameRate, 'fps');
-    //   console.log('Animation Duration:', animationDuration, 'seconds');
-    //   console.log('Setting Speed to:', requiredSpeed);
-    // });
 
     // this.animation.addEventListener('loopComplete', () => {
 
@@ -95,9 +82,42 @@ export class LottieComponent {
           container: this.elem,
           renderer: this.renderer as 'svg' | 'canvas' | 'html',
           loop: this.loop,
-          autoplay: this.customAutoplay, // this.autoplay,
+          autoplay: this.autoplay, // this.autoplay,
           path: this.src,
         });
+
+        this.animation.addEventListener('data_ready', () => {
+          // Calculate the animation duration in seconds
+          var totalFrames = this.animation!.totalFrames;
+          var frameRate = this.animation!.frameRate;
+          var animationDuration = totalFrames / frameRate; // Total duration in seconds
+    
+          // Calculate the required speed to make the animation duration 4 seconds
+          var requiredSpeed = animationDuration / this.duration; // sec
+    
+          // Set the calculated speed
+          this.animation?.setSpeed(requiredSpeed);
+    
+          // console.log('Animation Total Frames:', totalFrames);
+          // console.log('Frame Rate:', frameRate, 'fps');
+          // console.log('Animation Duration:', animationDuration, 'seconds');
+          // console.log('Setting Speed to:', requiredSpeed);
+        });
+
+        this.animation.addEventListener('loopComplete', () => {
+
+          if (this.onLoopComplete) {
+            this.onLoopComplete(this); // Call the provided callback function
+          }
+      
+        });
+
+        this.animation.addEventListener('complete', () => {
+          if (this.onLoopComplete) {
+            this.onLoopComplete(this); // Call the callback even if the animation doesn't loop
+          }
+        });
+        
 
 //     // Set the direction if specified
 //     this.animation.setDirection(this.direction);
@@ -114,10 +134,43 @@ export class LottieComponent {
 // this.animation.play();
   }
 
+  play(restart: boolean = false) {
+    if(restart) {
+      this.playFromFrame(1); 
+    } else {
+      this.animation?.play();
+    }
+  }
+
+  playFromFrame(frame: number) {
+    this.animation?.goToAndPlay(frame, false); 
+  }
+
+  playFromTime(ms: number) {
+    this.animation?.goToAndPlay(ms, false); 
+  }
+
+  playFromMarker(marker: string) {
+    this.animation?.goToAndPlay(marker); 
+  }
+
+  pause() {
+    if(this.animation) {
+      this.animation.pause();
+    }
+  }
+
+  stop() {
+    if(this.animation) {
+      this.animation.stop();
+    }
+  }
+
 }
 
 export class LottieComponentController {
   lotties: Map<string, LottieComponent> = new Map(); // Lookup dictionary to store Lottie instances
+  onLoopComplete?: (lottieInstance: LottieComponent) => void; 
 
   constructor() {
   }
@@ -125,14 +178,22 @@ export class LottieComponentController {
   init() {
     const elements = document.querySelectorAll(`[${LOTTIE}]`);
 
-    elements.forEach((element) => {
+    elements.forEach((element, onLoopComplete) => {
       const lottieId = element.getAttribute(LOTTIE);
       if (lottieId) {
         const lottie = new LottieComponent(element as HTMLElement);
+        
+        // Set the onLoopComplete handler
+        lottie.onLoopComplete = (lottieInstance) => {
+          if (this.onLoopComplete) {
+            this.onLoopComplete(lottieInstance); // Trigger the controller's callback
+          }
+        };
+
         lottie.init();
         this.lotties.set(lottieId, lottie); // Store the Lottie instance in the dictionary
 
-console.log("found lottie", lottieId); 
+//console.log("found lottie", lottieId); 
 
       }
     });
