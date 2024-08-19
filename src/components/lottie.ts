@@ -13,6 +13,7 @@ import lottie, { AnimationConfigWithPath, AnimationItem, AnimationDirection } fr
 // 'https://uploads-ssl.webflow.com/66beb9a99c2f7e199cfaf719/66c19f8652127360d3a68a8d_Arrow_style02.json'
 
 const LOTTIE = "wfu-lottie";
+const LOTTIE_AUTOPLAY = "wfu-lottie-autoplay";
 
 
 
@@ -29,6 +30,9 @@ export class LottieComponent {
   defaultDuration: number;
   duration: number;
   animation?: AnimationItem;
+  customAutoplay: boolean; // New custom autoplay attribute
+
+
   constructor(elem: HTMLElement) { 
 
     this.elem = elem; 
@@ -41,6 +45,7 @@ export class LottieComponent {
     this.renderer = this.elem.getAttribute('data-renderer') || 'svg';
     this.defaultDuration = parseFloat(this.elem.getAttribute('data-default-duration') || '0');
     this.duration = parseFloat(this.elem.getAttribute('data-duration') || '0'); 
+    this.customAutoplay = this.elem.getAttribute(LOTTIE_AUTOPLAY) === 'true'; // Capture custom autoplay attribute
 
     // Remove Webflow's data attribute to prevent it from taking over the Lottie initialization
     this.elem.removeAttribute('data-animation-type');
@@ -77,27 +82,36 @@ export class LottieComponent {
 
   }
 
-  init() {
+  init() { 
+
+        // Remove all child nodes from the element to ensure no existing Lottie content remains
+        while (this.elem.firstChild) {
+          this.elem.removeChild(this.elem.firstChild);
+        }
+
         // Initialize the Lottie animation manually using the captured attributes
+        // This will re-load the lottie beneath my DIV 
         this.animation = lottie.loadAnimation({
           container: this.elem,
           renderer: this.renderer as 'svg' | 'canvas' | 'html',
           loop: this.loop,
-          autoplay: false, // this.autoplay,
+          autoplay: this.customAutoplay, // this.autoplay,
           path: this.src,
         });
 
-    // Set the direction if specified
-    this.animation.setDirection(this.direction);
+//     // Set the direction if specified
+//     this.animation.setDirection(this.direction);
 
-    // Set duration if necessary
-    if (this.duration) {
-      const frameRate = this.animation.getDuration(true);
-      const totalFrames = this.animation.totalFrames;
-      const calculatedSpeed = (totalFrames / frameRate) / this.duration;
-      this.animation.setSpeed(calculatedSpeed);
-    }
-this.animation.stop(); 
+//     // Set duration if necessary
+//     if (this.duration) {
+//       const frameRate = this.animation.getDuration(true);
+//       const totalFrames = this.animation.totalFrames;
+//       const calculatedSpeed = (totalFrames / frameRate) / this.duration;
+//       this.animation.setSpeed(calculatedSpeed);
+//     }
+// // this.animation.stop(); 
+
+// this.animation.play();
   }
 
 }
@@ -123,8 +137,8 @@ console.log("found lottie", lottieId);
       }
     });
 
-    window.Webflow.require("lottie").destroy();
-    window.Webflow.require("lottie").init();
+    // window.Webflow.require("lottie").destroy();
+    // window.Webflow.require("lottie").init();
 
   }
 

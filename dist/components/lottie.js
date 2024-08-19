@@ -16350,6 +16350,7 @@
   // src/components/lottie.ts
   var import_lottie_web = __toESM(require_lottie());
   var LOTTIE = "wfu-lottie";
+  var LOTTIE_AUTOPLAY = "wfu-lottie-autoplay";
   var LottieComponent = class {
     constructor(elem2) {
       this.elem = elem2;
@@ -16360,25 +16361,21 @@
       this.renderer = this.elem.getAttribute("data-renderer") || "svg";
       this.defaultDuration = parseFloat(this.elem.getAttribute("data-default-duration") || "0");
       this.duration = parseFloat(this.elem.getAttribute("data-duration") || "0");
+      this.customAutoplay = this.elem.getAttribute(LOTTIE_AUTOPLAY) === "true";
       this.elem.removeAttribute("data-animation-type");
       this.elem.removeAttribute("data-autoplay");
     }
     init() {
+      while (this.elem.firstChild) {
+        this.elem.removeChild(this.elem.firstChild);
+      }
       this.animation = import_lottie_web.default.loadAnimation({
         container: this.elem,
         renderer: this.renderer,
         loop: this.loop,
-        autoplay: false,
+        autoplay: this.customAutoplay,
         path: this.src
       });
-      this.animation.setDirection(this.direction);
-      if (this.duration) {
-        const frameRate = this.animation.getDuration(true);
-        const totalFrames = this.animation.totalFrames;
-        const calculatedSpeed = totalFrames / frameRate / this.duration;
-        this.animation.setSpeed(calculatedSpeed);
-      }
-      this.animation.stop();
     }
   };
   var LottieComponentController = class {
@@ -16396,8 +16393,6 @@
           console.log("found lottie", lottieId);
         }
       });
-      window.Webflow.require("lottie").destroy();
-      window.Webflow.require("lottie").init();
     }
     getLottieById(id) {
       return this.lotties.get(id);
