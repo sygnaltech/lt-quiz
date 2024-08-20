@@ -48,6 +48,11 @@ export class AutoSwiper2xComponent {
     this.swiperElement = this.elem.querySelector(`[${SWIPER2X_SWIPER}]`) as HTMLElement;
     this.featuredImageLabel = this.elem.querySelector(`[${SWIPER2X_LABEL}]`) as HTMLElement;
     const autoNextButtonElement = this.elem.querySelector(`[${SWIPER2X_AUTONEXTBUTTON}]`) as HTMLElement;
+    const nextButton = this.elem.querySelector(`.swiper-right-2`) as HTMLElement;
+    const prevButton = this.elem.querySelector(`.swiper-left-2`) as HTMLElement;
+
+    console.log("prev button", prevButton)
+    console.log("next button", nextButton)
 
     // Create swiper 
     this.swiperInstance = new Swiper(this.swiperElement,   // '.swiper', 
@@ -60,10 +65,10 @@ export class AutoSwiper2xComponent {
       loopAdditionalSlides: 2,
 
       // Navigation arrows
-      navigation: {
-        nextEl: '.swiper-right-2',
-        prevEl: '.swiper-left-2',
-      },
+      // navigation: {
+      //   nextEl: nextButton, // '.swiper-right-2',
+      //   prevEl: prevButton, // '.swiper-left-2',
+      // },
     });
 
     // Attach event listener for slide change
@@ -71,7 +76,17 @@ export class AutoSwiper2xComponent {
       this.updateFeaturedSlide();
     });
 
-
+    if (nextButton) {
+      nextButton.addEventListener('click', () => {
+          this.swiperInstance?.slideNext(); // Move to the next slide
+      });
+  }
+  
+  if (prevButton) {
+      prevButton.addEventListener('click', () => {
+          this.swiperInstance?.slidePrev(); // Move to the previous slide
+      });
+  }
     // Setup the Lottie controller
     // register a loopComplete event 
     const lc: LottieComponentController = new LottieComponentController();
@@ -83,14 +98,21 @@ export class AutoSwiper2xComponent {
         case "mexico-city":
 
           this.swiperInstance?.slideNext(); 
+          this.swiperInstance?.update();
           this.updateFeaturedSlide(); 
+          setTimeout(() => {
+            this.swiperInstance?.update();
+        }, 100); // Delay update to ensure the tab is fully visible
 
           break;
         case "tijuana":
 
           this.swiperInstance?.slideNext(); 
+          this.swiperInstance?.update();
           this.updateFeaturedSlide(); 
-
+          setTimeout(() => {
+            this.swiperInstance?.update();
+        }, 100); // Delay update to ensure the tab is fully visible
           break;
       }
 

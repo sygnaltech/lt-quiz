@@ -29074,6 +29074,10 @@
       this.swiperElement = this.elem.querySelector(`[${SWIPER2X_SWIPER}]`);
       this.featuredImageLabel = this.elem.querySelector(`[${SWIPER2X_LABEL}]`);
       const autoNextButtonElement = this.elem.querySelector(`[${SWIPER2X_AUTONEXTBUTTON}]`);
+      const nextButton = this.elem.querySelector(`.swiper-right-2`);
+      const prevButton = this.elem.querySelector(`.swiper-left-2`);
+      console.log("prev button", prevButton);
+      console.log("next button", nextButton);
       this.swiperInstance = new Swiper(
         this.swiperElement,
         {
@@ -29082,28 +29086,46 @@
           spaceBetween: 10,
           direction: "horizontal",
           loop: true,
-          loopAdditionalSlides: 2,
-          navigation: {
-            nextEl: ".swiper-right-2",
-            prevEl: ".swiper-left-2"
-          }
+          loopAdditionalSlides: 2
         }
       );
       this.swiperInstance.on("slideChange", () => {
         this.updateFeaturedSlide();
       });
+      if (nextButton) {
+        nextButton.addEventListener("click", () => {
+          var _a;
+          (_a = this.swiperInstance) == null ? void 0 : _a.slideNext();
+        });
+      }
+      if (prevButton) {
+        prevButton.addEventListener("click", () => {
+          var _a;
+          (_a = this.swiperInstance) == null ? void 0 : _a.slidePrev();
+        });
+      }
       const lc = new LottieComponentController();
       lc.onLoopComplete = (lottieInstance) => {
-        var _a, _b;
+        var _a, _b, _c, _d;
         console.log("loop completed:", lottieInstance.name);
         switch (lottieInstance.name) {
           case "mexico-city":
             (_a = this.swiperInstance) == null ? void 0 : _a.slideNext();
+            (_b = this.swiperInstance) == null ? void 0 : _b.update();
             this.updateFeaturedSlide();
+            setTimeout(() => {
+              var _a2;
+              (_a2 = this.swiperInstance) == null ? void 0 : _a2.update();
+            }, 100);
             break;
           case "tijuana":
-            (_b = this.swiperInstance) == null ? void 0 : _b.slideNext();
+            (_c = this.swiperInstance) == null ? void 0 : _c.slideNext();
+            (_d = this.swiperInstance) == null ? void 0 : _d.update();
             this.updateFeaturedSlide();
+            setTimeout(() => {
+              var _a2;
+              (_a2 = this.swiperInstance) == null ? void 0 : _a2.update();
+            }, 100);
             break;
         }
       };
