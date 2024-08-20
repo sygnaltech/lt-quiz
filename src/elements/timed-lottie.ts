@@ -5,6 +5,10 @@ import lottie, { AnimationConfigWithPath } from 'lottie-web';
 
 
 /** 
+ * 
+ * DEPRECATED, use lottie instead 
+ * It also does timing triggers & events 
+ * 
  * Component | Timed Lottie 
  * Plays a Lottie at a specific time duration ( in sec )
  */

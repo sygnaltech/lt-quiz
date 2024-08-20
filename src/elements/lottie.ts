@@ -38,6 +38,22 @@ export class LottieComponent {
 
     this.elem = elem; 
 
+    // Remove Webflow's data attribute to prevent it from taking over the Lottie initialization
+    this.elem.removeAttribute('data-animation-type');
+    this.elem.removeAttribute('data-autoplay');
+
+    // Recreate the element
+    const newElem: HTMLElement = this.elem.cloneNode(false) as HTMLElement; // do not clone child nodes
+
+    // Insert the new element before the original element
+    this.elem.parentNode?.insertBefore(newElem, this.elem);
+
+    // Remove the original element from the DOM
+    this.elem.remove();
+
+    this.elem = newElem; 
+
+
     this.name = elem.getAttribute(LOTTIE) || undefined; 
 
     // Capture relevant data attributes
@@ -49,11 +65,9 @@ export class LottieComponent {
     this.renderer = this.elem.getAttribute('data-renderer') || 'svg';
     this.defaultDuration = parseFloat(this.elem.getAttribute('data-default-duration') || '0');
     this.duration = parseFloat(this.elem.getAttribute('data-duration') || '0'); 
-    this.autoplay = this.elem.getAttribute(LOTTIE_AUTOPLAY) === 'true'; // Capture custom autoplay attribute
+    this.autoplay = this.elem.getAttribute(LOTTIE_AUTOPLAY) !== 'false'; // Capture custom autoplay attribute
 
-    // Remove Webflow's data attribute to prevent it from taking over the Lottie initialization
-    this.elem.removeAttribute('data-animation-type');
-    this.elem.removeAttribute('data-autoplay');
+
 
     // this.animation = lottie.loadAnimation(config);
     // this.onLoopComplete = onLoopComplete;

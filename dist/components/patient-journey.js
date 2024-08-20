@@ -16353,7 +16353,14 @@
   var LOTTIE_AUTOPLAY = "wfu-lottie-autoplay";
   var LottieComponent = class {
     constructor(elem2) {
+      var _a;
       this.elem = elem2;
+      this.elem.removeAttribute("data-animation-type");
+      this.elem.removeAttribute("data-autoplay");
+      const newElem = this.elem.cloneNode(false);
+      (_a = this.elem.parentNode) == null ? void 0 : _a.insertBefore(newElem, this.elem);
+      this.elem.remove();
+      this.elem = newElem;
       this.name = elem2.getAttribute(LOTTIE) || void 0;
       this.src = this.elem.getAttribute("data-src") || "";
       this.loop = this.elem.getAttribute("data-loop") === "1";
@@ -16362,9 +16369,7 @@
       this.renderer = this.elem.getAttribute("data-renderer") || "svg";
       this.defaultDuration = parseFloat(this.elem.getAttribute("data-default-duration") || "0");
       this.duration = parseFloat(this.elem.getAttribute("data-duration") || "0");
-      this.autoplay = this.elem.getAttribute(LOTTIE_AUTOPLAY) === "true";
-      this.elem.removeAttribute("data-animation-type");
-      this.elem.removeAttribute("data-autoplay");
+      this.autoplay = this.elem.getAttribute(LOTTIE_AUTOPLAY) !== "false";
     }
     init() {
       while (this.elem.firstChild) {

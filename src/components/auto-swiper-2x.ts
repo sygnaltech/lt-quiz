@@ -6,7 +6,8 @@
  * 
  * - Component - [sse-swiper2x]
  * - FeaturedSlide - 2x Image contains slide 1 [sse-swiper2x-image] 
- * - Swiper [sse-swiper2x-swiper]
+ * - FeaturedSlideLabel [sse-swiper2x-label]  
+ * - Swiper [sse-swiper2x-swiper]  
  * - AutoNextButton [sse-swiper2x-autobutton]
  */
 
@@ -15,13 +16,15 @@ import { initSSE } from '@sygnal/sse';
 import Swiper from 'swiper';
 import 'swiper/swiper-bundle.css';
 import { TimedLottieComponent } from '../elements/timed-lottie';
+import { LottieComponentController } from '../elements/lottie';
 
 
 const SWIPER2X = "sse-swiper2x";
 const SWIPER2X_FEATUREDIMAGE = "sse-swiper2x-image";
 const SWIPER2X_SWIPER = "sse-swiper2x-swiper";
 const SWIPER2X_AUTONEXTBUTTON = "sse-swiper2x-autobutton";
-const SWIPER2X_AUTONEXTBUTTON_SRC = "sse-swiper2x-autobutton-src";
+const SWIPER2X_LABEL = "sse-swiper2x-label";
+
 
 
 export class AutoSwiper2xComponent {
@@ -31,6 +34,7 @@ export class AutoSwiper2xComponent {
 
   featuredImage!: HTMLImageElement;
   swiperElement!: HTMLElement;
+  featuredImageLabel!: HTMLElement;
 
   constructor(elem: HTMLElement) {
     this.elem = elem; 
@@ -39,14 +43,17 @@ export class AutoSwiper2xComponent {
 
   init() { 
 
+    // Get the parts of the component 
     this.featuredImage = this.elem.querySelector(`[${SWIPER2X_FEATUREDIMAGE}]`) as HTMLImageElement;
     this.swiperElement = this.elem.querySelector(`[${SWIPER2X_SWIPER}]`) as HTMLElement;
+    this.featuredImageLabel = this.elem.querySelector(`[${SWIPER2X_LABEL}]`) as HTMLElement;
     const autoNextButtonElement = this.elem.querySelector(`[${SWIPER2X_AUTONEXTBUTTON}]`) as HTMLElement;
 
     // Create swiper 
     this.swiperInstance = new Swiper(this.swiperElement,   // '.swiper', 
       {
-      slidesPerView: 10,
+      slidesPerView: 6, // 10
+      slidesPerGroup: 1, 
       spaceBetween: 10,
       direction: 'horizontal',
       loop: true,
@@ -64,25 +71,31 @@ export class AutoSwiper2xComponent {
       this.updateFeaturedSlide();
     });
 
-    // Pull URL from element
-    this.autoNextButton = new TimedLottieComponent(      {
-      container: autoNextButtonElement, // the DOM element
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      path: autoNextButtonElement.getAttribute(SWIPER2X_AUTONEXTBUTTON_SRC) || undefined // the path to the Lottie file
-    },
-    () => {
-//      console.log('The Lottie animation loop is complete!'); 
-      this.swiperInstance?.slideNext(); 
-      this.updateFeaturedSlide(); 
-      // Perform any action needed when the loop is complete
+
+    // Setup the Lottie controller
+    // register a loopComplete event 
+    const lc: LottieComponentController = new LottieComponentController();
+    lc.onLoopComplete = (lottieInstance) => { 
+
+      console.log("loop completed:", lottieInstance.name);
+
+      switch(lottieInstance.name) {
+        case "mexico-city":
+
+          this.swiperInstance?.slideNext(); 
+          this.updateFeaturedSlide(); 
+
+          break;
+        case "tijuana":
+
+          this.swiperInstance?.slideNext(); 
+          this.updateFeaturedSlide(); 
+
+          break;
+      }
+
     }
-  
-  );
-  this.autoNextButton.durationSec = 4; // sec 
-
-
+    lc.init(); 
 
   }
 
@@ -100,44 +113,16 @@ export class AutoSwiper2xComponent {
     const imgElement = el.querySelector('img'); // Find the image element within the slide
     const imgSrc = imgElement ? imgElement.src : null; // Get the src attribute of the image, if the image element exists
 
+    // Find the clinic-gallery-badge div
+    const badgeElement = el.querySelector('.clinic-gallery-badge > div');
+    const badgeText = badgeElement ? badgeElement.textContent : null; // Get the text content inside the badge, if it exists
+
     if (imgSrc) { 
-
-this.featuredImage.src = imgSrc; 
-
-console.log(`set img - ${imgSrc}`)
-
-      // Select all images with the class 'clinic-featured-slide-index'
-//      const targetImages = document.querySelectorAll<HTMLImageElement>('img.clinic-featured-slide-index');
-
-      // Set the src attribute of each selected image to the retrieved imgSrc
-//      targetImages.forEach((targetImg) => {
-        // const newImg = new Image();
-        // newImg.src = imgSrc;
-
-        // this.featuredImage.style.opacity = '0';
-
-        // // Once the image is loaded, set it as the src and trigger the fade-in
-        // newImg.onload = () => {
-        //   this.featuredImage.src = imgSrc;
-
-        //   // Use a short timeout to ensure the image is set before the fade-in begins
-        //   setTimeout(() => {
-        //     this.featuredImage.style.opacity = '1'; // Trigger the CSS transition
-        //     this.featuredImage.removeAttribute('style');
-        //   }, 50); // Slight delay to allow the reflow to occur
-        // };
-//      });
+      this.featuredImage.src = imgSrc; 
     } 
 
-  }
+    this.featuredImageLabel.textContent = badgeText; 
 
-  static initializeAll() {
-    const elements = document.querySelectorAll(`[${SWIPER2X}]`);
-
-    elements.forEach((element) => {
-      const swiperComponent = new AutoSwiper2xComponent(element as HTMLElement);
-      swiperComponent.init();
-    });
   }
 
 } 

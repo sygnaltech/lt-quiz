@@ -1,6 +1,6 @@
 "use strict";
 (() => {
   // src/version.ts
-  var VERSION = "0.1.8";
+  var VERSION = "0.1.9";
 })();
 //# sourceMappingURL=version.js.map

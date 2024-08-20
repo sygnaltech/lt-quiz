@@ -15,7 +15,6 @@ import { initSSE } from '@sygnal/sse';
 import { LottieComponentController } from "../elements/lottie";
 
 
-const PATIENT_JOURNEY = "sse-journey";
 
 
 export class PatientsJourneyComponent {
@@ -32,15 +31,16 @@ export class PatientsJourneyComponent {
 
   init() { 
 
+    // Create the SA5 Accordion element
+    // this is the same element as the patient's journey component
     this.accordion = new window.sa5.Sa5Accordion(
-      this.elem  // same element as patient's journey component is 
+      this.elem  
     ); 
 
+    // Setup the Accordion-changed event
     window.sa5 = window.sa5 || [];
     window.sa5.push(['accordionChanged', 
       (accordion: any, index: number) => {
-        
-//        console.log("ACCORDION CHANGED", accordion.items[index].name, accordion, index); 
     
         switch(accordion.items[index].name) {
           case "item1": 
@@ -61,9 +61,9 @@ export class PatientsJourneyComponent {
         }
     
       }]); 
-
     
-
+    // Setup the Lottie controller
+    // register a loopComplete event 
     const lc: LottieComponentController = new LottieComponentController();
     lc.onLoopComplete = (lottieInstance) => { 
 
@@ -71,7 +71,6 @@ export class PatientsJourneyComponent {
 
       switch(lottieInstance.name) {
         case "1":
-//          console.log("changing accordion to 2", this.accordion.name);
           this.accordion.currentNum = 2; 
           break;
         case "2":

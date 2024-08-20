@@ -1460,7 +1460,7 @@
           }
           return _typeof$4(obj);
         }
-        var AnimationItem = function AnimationItem2() {
+        var AnimationItem = function AnimationItem3() {
           this._cbs = [];
           this.name = "";
           this.path = "";
@@ -20552,38 +20552,121 @@
   });
   Swiper.use([Resize, Observer]);
 
-  // src/elements/timed-lottie.ts
+  // src/elements/lottie.ts
   var import_lottie_web = __toESM(require_lottie());
-  var TimedLottieComponent = class {
-    constructor(config, onLoopComplete) {
-      this.durationSec = 4;
-      this.animation = import_lottie_web.default.loadAnimation(config);
-      this.onLoopComplete = onLoopComplete;
+  var LOTTIE = "wfu-lottie";
+  var LOTTIE_AUTOPLAY = "wfu-lottie-autoplay";
+  var LottieComponent = class {
+    constructor(elem2) {
+      var _a;
+      this.elem = elem2;
+      this.elem.removeAttribute("data-animation-type");
+      this.elem.removeAttribute("data-autoplay");
+      const newElem = this.elem.cloneNode(false);
+      (_a = this.elem.parentNode) == null ? void 0 : _a.insertBefore(newElem, this.elem);
+      this.elem.remove();
+      this.elem = newElem;
+      this.name = elem2.getAttribute(LOTTIE) || void 0;
+      this.src = this.elem.getAttribute("data-src") || "";
+      this.loop = this.elem.getAttribute("data-loop") === "1";
+      this.direction = parseInt(this.elem.getAttribute("data-direction") || "1", 10);
+      this._wfAutoplay = this.elem.getAttribute("data-autoplay") === "1";
+      this.renderer = this.elem.getAttribute("data-renderer") || "svg";
+      this.defaultDuration = parseFloat(this.elem.getAttribute("data-default-duration") || "0");
+      this.duration = parseFloat(this.elem.getAttribute("data-duration") || "0");
+      this.autoplay = this.elem.getAttribute(LOTTIE_AUTOPLAY) !== "false";
+    }
+    init() {
+      while (this.elem.firstChild) {
+        this.elem.removeChild(this.elem.firstChild);
+      }
+      this.animation = import_lottie_web.default.loadAnimation({
+        container: this.elem,
+        renderer: this.renderer,
+        loop: this.loop,
+        autoplay: this.autoplay,
+        path: this.src
+      });
       this.animation.addEventListener("data_ready", () => {
+        var _a;
         var totalFrames = this.animation.totalFrames;
         var frameRate = this.animation.frameRate;
         var animationDuration = totalFrames / frameRate;
-        var requiredSpeed = animationDuration / this.durationSec;
-        this.animation.setSpeed(requiredSpeed);
-        console.log("Animation Total Frames:", totalFrames);
-        console.log("Frame Rate:", frameRate, "fps");
-        console.log("Animation Duration:", animationDuration, "seconds");
-        console.log("Setting Speed to:", requiredSpeed);
+        var requiredSpeed = animationDuration / this.duration;
+        (_a = this.animation) == null ? void 0 : _a.setSpeed(requiredSpeed);
       });
       this.animation.addEventListener("loopComplete", () => {
         if (this.onLoopComplete) {
-          this.onLoopComplete();
+          this.onLoopComplete(this);
         }
       });
+      this.animation.addEventListener("complete", () => {
+        if (this.onLoopComplete) {
+          this.onLoopComplete(this);
+        }
+      });
+    }
+    play(restart = false) {
+      var _a;
+      if (restart) {
+        this.playFromFrame(1);
+      } else {
+        (_a = this.animation) == null ? void 0 : _a.play();
+      }
+    }
+    playFromFrame(frame) {
+      var _a;
+      (_a = this.animation) == null ? void 0 : _a.goToAndPlay(frame, false);
+    }
+    playFromTime(ms) {
+      var _a;
+      (_a = this.animation) == null ? void 0 : _a.goToAndPlay(ms, false);
+    }
+    playFromMarker(marker) {
+      var _a;
+      (_a = this.animation) == null ? void 0 : _a.goToAndPlay(marker);
+    }
+    pause() {
+      if (this.animation) {
+        this.animation.pause();
+      }
+    }
+    stop() {
+      if (this.animation) {
+        this.animation.stop();
+      }
+    }
+  };
+  var LottieComponentController = class {
+    constructor() {
+      this.lotties = /* @__PURE__ */ new Map();
+    }
+    init() {
+      const elements = document.querySelectorAll(`[${LOTTIE}]`);
+      elements.forEach((element, onLoopComplete) => {
+        const lottieId = element.getAttribute(LOTTIE);
+        if (lottieId) {
+          const lottie3 = new LottieComponent(element);
+          lottie3.onLoopComplete = (lottieInstance) => {
+            if (this.onLoopComplete) {
+              this.onLoopComplete(lottieInstance);
+            }
+          };
+          lottie3.init();
+          this.lotties.set(lottieId, lottie3);
+        }
+      });
+    }
+    getLottieById(id) {
+      return this.lotties.get(id);
     }
   };
 
   // src/components/auto-swiper-2x.ts
-  var SWIPER2X = "sse-swiper2x";
   var SWIPER2X_FEATUREDIMAGE = "sse-swiper2x-image";
   var SWIPER2X_SWIPER = "sse-swiper2x-swiper";
   var SWIPER2X_AUTONEXTBUTTON = "sse-swiper2x-autobutton";
-  var SWIPER2X_AUTONEXTBUTTON_SRC = "sse-swiper2x-autobutton-src";
+  var SWIPER2X_LABEL = "sse-swiper2x-label";
   var AutoSwiper2xComponent = class {
     constructor(elem2) {
       this.elem = elem2;
@@ -20591,11 +20674,13 @@
     init() {
       this.featuredImage = this.elem.querySelector(`[${SWIPER2X_FEATUREDIMAGE}]`);
       this.swiperElement = this.elem.querySelector(`[${SWIPER2X_SWIPER}]`);
+      this.featuredImageLabel = this.elem.querySelector(`[${SWIPER2X_LABEL}]`);
       const autoNextButtonElement = this.elem.querySelector(`[${SWIPER2X_AUTONEXTBUTTON}]`);
       this.swiperInstance = new Swiper(
         this.swiperElement,
         {
-          slidesPerView: 10,
+          slidesPerView: 6,
+          slidesPerGroup: 1,
           spaceBetween: 10,
           direction: "horizontal",
           loop: true,
@@ -20609,21 +20694,22 @@
       this.swiperInstance.on("slideChange", () => {
         this.updateFeaturedSlide();
       });
-      this.autoNextButton = new TimedLottieComponent(
-        {
-          container: autoNextButtonElement,
-          renderer: "svg",
-          loop: true,
-          autoplay: true,
-          path: autoNextButtonElement.getAttribute(SWIPER2X_AUTONEXTBUTTON_SRC) || void 0
-        },
-        () => {
-          var _a;
-          (_a = this.swiperInstance) == null ? void 0 : _a.slideNext();
-          this.updateFeaturedSlide();
+      const lc = new LottieComponentController();
+      lc.onLoopComplete = (lottieInstance) => {
+        var _a, _b;
+        console.log("loop completed:", lottieInstance.name);
+        switch (lottieInstance.name) {
+          case "mexico-city":
+            (_a = this.swiperInstance) == null ? void 0 : _a.slideNext();
+            this.updateFeaturedSlide();
+            break;
+          case "tijuana":
+            (_b = this.swiperInstance) == null ? void 0 : _b.slideNext();
+            this.updateFeaturedSlide();
+            break;
         }
-      );
-      this.autoNextButton.durationSec = 4;
+      };
+      lc.init();
     }
     updateFeaturedSlide() {
       if (!this.swiperInstance)
@@ -20633,17 +20719,12 @@
       const el = this.swiperInstance.slides[prevIndex];
       const imgElement = el.querySelector("img");
       const imgSrc = imgElement ? imgElement.src : null;
+      const badgeElement = el.querySelector(".clinic-gallery-badge > div");
+      const badgeText = badgeElement ? badgeElement.textContent : null;
       if (imgSrc) {
         this.featuredImage.src = imgSrc;
-        console.log(`set img - ${imgSrc}`);
       }
-    }
-    static initializeAll() {
-      const elements = document.querySelectorAll(`[${SWIPER2X}]`);
-      elements.forEach((element) => {
-        const swiperComponent = new AutoSwiper2xComponent(element);
-        swiperComponent.init();
-      });
+      this.featuredImageLabel.textContent = badgeText;
     }
   };
 })();
