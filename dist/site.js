@@ -288,11 +288,9 @@
       elements.forEach((element) => {
         switch (document.documentElement.lang) {
           case "en":
-            console.log("indicator", document.documentElement.lang);
             element.removeAttribute("style");
             break;
           case "es":
-            console.log("indicator", document.documentElement.lang, element);
             element.style.display = "flex";
             element.style.justifyContent = "flex-end";
             break;
@@ -301,10 +299,8 @@
     }
     setupLocaleSwitch() {
       const handleClick = (locale) => {
-        console.log(`Locale switch to: ${locale}`);
         const element = document.querySelector(`[sse-locale-switch-to="${locale}"]`);
         if (element) {
-          console.log("Element found:", element);
           element.click();
         } else {
           console.error('Element with custom attribute sse-locale-switch-to="en" not found');
@@ -313,7 +309,6 @@
       const elements = document.querySelectorAll("[sse-locale-switch]");
       elements.forEach((element) => {
         const locale = element.getAttribute("sse-locale-switch");
-        console.log("installing locale switch", locale);
         if (locale) {
           element.addEventListener("click", () => handleClick(locale));
         } else {

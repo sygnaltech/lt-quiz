@@ -20678,8 +20678,6 @@
       const autoNextButtonElement = this.elem.querySelector(`[${SWIPER2X_AUTONEXTBUTTON}]`);
       const nextButton = this.elem.querySelector(`.swiper-right-2`);
       const prevButton = this.elem.querySelector(`.swiper-left-2`);
-      console.log("prev button", prevButton);
-      console.log("next button", nextButton);
       this.swiperInstance = new Swiper(
         this.swiperElement,
         {
@@ -20737,7 +20735,6 @@
       if (!this.swiperInstance)
         return;
       const prevIndex = this.swiperInstance.realIndex >= 1 ? this.swiperInstance.realIndex - 1 : this.swiperInstance.slides.length - 1;
-      console.log("slide changed", this.swiperInstance.realIndex, prevIndex);
       const el = this.swiperInstance.slides[prevIndex];
       const imgElement = el.querySelector("img");
       const imgSrc = imgElement ? imgElement.src : null;

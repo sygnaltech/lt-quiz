@@ -24169,11 +24169,9 @@
       elements.forEach((element) => {
         switch (document.documentElement.lang) {
           case "en":
-            console.log("indicator", document.documentElement.lang);
             element.removeAttribute("style");
             break;
           case "es":
-            console.log("indicator", document.documentElement.lang, element);
             element.style.display = "flex";
             element.style.justifyContent = "flex-end";
             break;
@@ -24182,10 +24180,8 @@
     }
     setupLocaleSwitch() {
       const handleClick = (locale) => {
-        console.log(`Locale switch to: ${locale}`);
         const element = document.querySelector(`[sse-locale-switch-to="${locale}"]`);
         if (element) {
-          console.log("Element found:", element);
           element.click();
         } else {
           console.error('Element with custom attribute sse-locale-switch-to="en" not found');
@@ -24194,7 +24190,6 @@
       const elements = document.querySelectorAll("[sse-locale-switch]");
       elements.forEach((element) => {
         const locale = element.getAttribute("sse-locale-switch");
-        console.log("installing locale switch", locale);
         if (locale) {
           element.addEventListener("click", () => handleClick(locale));
         } else {
@@ -24354,7 +24349,6 @@
         try {
           const response = yield fetch(url);
           const data2 = yield response.json();
-          console.log(data2);
           this.applyIPInfoData(data2);
         } catch (error) {
           console.error("Failed to fetch IP info:", error);
@@ -29076,8 +29070,6 @@
       const autoNextButtonElement = this.elem.querySelector(`[${SWIPER2X_AUTONEXTBUTTON}]`);
       const nextButton = this.elem.querySelector(`.swiper-right-2`);
       const prevButton = this.elem.querySelector(`.swiper-left-2`);
-      console.log("prev button", prevButton);
-      console.log("next button", nextButton);
       this.swiperInstance = new Swiper(
         this.swiperElement,
         {
@@ -29135,7 +29127,6 @@
       if (!this.swiperInstance)
         return;
       const prevIndex = this.swiperInstance.realIndex >= 1 ? this.swiperInstance.realIndex - 1 : this.swiperInstance.slides.length - 1;
-      console.log("slide changed", this.swiperInstance.realIndex, prevIndex);
       const el = this.swiperInstance.slides[prevIndex];
       const imgElement = el.querySelector("img");
       const imgSrc = imgElement ? imgElement.src : null;

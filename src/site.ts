@@ -68,11 +68,11 @@ export class Site implements IRouteHandler {
     elements.forEach(element => {
         switch(document.documentElement.lang) {
             case "en": // default 
-                console.log("indicator", document.documentElement.lang);
+//                console.log("indicator", document.documentElement.lang);
                 element.removeAttribute('style');
                 break;
             case "es":
-                console.log("indicator", document.documentElement.lang, element);
+//                console.log("indicator", document.documentElement.lang, element);
                 element.style.display = 'flex'; // Ensure the element is a flex container
                 element.style.justifyContent = 'flex-end';
                 break;
@@ -84,7 +84,7 @@ export class Site implements IRouteHandler {
   setupLocaleSwitch() {
 
     const handleClick = (locale: string) => {
-      console.log(`Locale switch to: ${locale}`);
+//      console.log(`Locale switch to: ${locale}`);
 //      const currentPath = window.location.pathname;
 
 //      console.log("trigger locale switch", locale, window.location); 
@@ -93,7 +93,7 @@ export class Site implements IRouteHandler {
     
       if (element) {
           // Log the element to the console
-          console.log('Element found:', element);
+//          console.log('Element found:', element);
           
           // Click the element
           element.click();
@@ -126,7 +126,7 @@ export class Site implements IRouteHandler {
     elements.forEach(element => {
         // Get the value of the `SSE-Locale-switch` attribute
         const locale = element.getAttribute('sse-locale-switch');
-        console.log("installing locale switch", locale); 
+//         console.log("installing locale switch", locale); 
         if (locale) {
             // Install the click event handler
             element.addEventListener('click', () => handleClick(locale));

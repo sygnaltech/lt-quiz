@@ -51,8 +51,8 @@ export class AutoSwiper2xComponent {
     const nextButton = this.elem.querySelector(`.swiper-right-2`) as HTMLElement;
     const prevButton = this.elem.querySelector(`.swiper-left-2`) as HTMLElement;
 
-    console.log("prev button", prevButton)
-    console.log("next button", nextButton)
+    // console.log("prev button", prevButton)
+    // console.log("next button", nextButton)
 
     // Create swiper 
     this.swiperInstance = new Swiper(this.swiperElement,   // '.swiper', 
@@ -129,7 +129,7 @@ export class AutoSwiper2xComponent {
         ? this.swiperInstance.realIndex - 1
         : this.swiperInstance.slides.length - 1;
 
-    console.log('slide changed', this.swiperInstance.realIndex, prevIndex);
+//    console.log('slide changed', this.swiperInstance.realIndex, prevIndex);
 
     const el = this.swiperInstance.slides[prevIndex] as HTMLElement;
     const imgElement = el.querySelector('img'); // Find the image element within the slide

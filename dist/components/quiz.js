@@ -7609,7 +7609,6 @@
         try {
           const response = yield fetch(url);
           const data = yield response.json();
-          console.log(data);
           this.applyIPInfoData(data);
         } catch (error) {
           console.error("Failed to fetch IP info:", error);
