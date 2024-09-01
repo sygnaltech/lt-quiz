@@ -23819,7 +23819,7 @@
   });
 
   // src/version.ts
-  var VERSION = "0.1.9";
+  var VERSION = "0.1.10";
 
   // src/page/home.ts
   var HomePage = class {
@@ -24319,11 +24319,11 @@
       return `${(this.probability * 100).toFixed(2)}%`;
     }
     get "score-category"() {
-      if (this.score >= 0 && this.score <= 2) {
+      if (this.score >= 0 && this.score <= 3) {
         return "low";
-      } else if (this.score >= 3 && this.score <= 7) {
+      } else if (this.score >= 4 && this.score <= 9) {
         return "moderate";
-      } else if (this.score >= 8) {
+      } else if (this.score >= 10) {
         return "high";
       }
       return "unknown";
