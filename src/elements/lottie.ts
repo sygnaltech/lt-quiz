@@ -8,6 +8,10 @@ import lottie, { AnimationConfigWithPath, AnimationItem, AnimationDirection } fr
 /** 
  * Component | Lottie 
  * Plays a Lottie at a specific time duration ( in sec )
+ * 
+ * IMPORTANT
+ * - Must uncheck Use built-in duration and set a value
+ * - Looping is recommended for events 
  */
 
 // 'https://uploads-ssl.webflow.com/66beb9a99c2f7e199cfaf719/66c19f8652127360d3a68a8d_Arrow_style02.json'
