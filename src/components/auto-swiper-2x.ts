@@ -14,15 +14,22 @@
 
 import { initSSE } from '@sygnal/sse';
 import Swiper from 'swiper';
-import 'swiper/swiper-bundle.css';
+//import { Autoplay } from 'swiper';
+// import Autoplay from 'swiper/modules/autoplay';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+// import 'swiper/modules/autoplay';
+// import 'swiper/swiper-bundle.css';
 import { TimedLottieComponent } from '../elements/timed-lottie';
 import { LottieComponentController } from '../elements/lottie';
 
 
 const SWIPER2X = "sse-swiper2x";
-const SWIPER2X_FEATUREDIMAGE = "sse-swiper2x-image";
+const SWIPER2X_FEATUREDIMAGE = "sse-swiper2x-featured-image";
+const SWIPER2X_FEATUREDIMAGE_LABEL = "sse-swiper2x-featured-label";
 const SWIPER2X_SWIPER = "sse-swiper2x-swiper";
-const SWIPER2X_AUTONEXTBUTTON = "sse-swiper2x-autobutton";
+// const SWIPER2X_AUTONEXTBUTTON = "sse-swiper2x-autobutton";
 const SWIPER2X_LABEL = "sse-swiper2x-label";
 
 
@@ -45,25 +52,78 @@ export class AutoSwiper2xComponent {
 
     // Get the parts of the component 
     this.featuredImage = this.elem.querySelector(`[${SWIPER2X_FEATUREDIMAGE}]`) as HTMLImageElement;
+    if(!this.featuredImage) {
+      console.error("Unable to locate featured image")
+    }
+    this.featuredImageLabel = this.elem.querySelector(`[${SWIPER2X_FEATUREDIMAGE_LABEL}]`) as HTMLElement;
+    if(!this.featuredImage) {
+      console.error("Unable to locate featured image label")
+    }
     this.swiperElement = this.elem.querySelector(`[${SWIPER2X_SWIPER}]`) as HTMLElement;
-    this.featuredImageLabel = this.elem.querySelector(`[${SWIPER2X_LABEL}]`) as HTMLElement;
-    const autoNextButtonElement = this.elem.querySelector(`[${SWIPER2X_AUTONEXTBUTTON}]`) as HTMLElement;
+    if(!this.featuredImage) {
+      console.error("Unable to locate 2x swiper")
+    }
+    // const autoNextButtonElement = this.elem.querySelector(`[${SWIPER2X_AUTONEXTBUTTON}]`) as HTMLElement;
     const nextButton = this.elem.querySelector(`.swiper-right-2`) as HTMLElement;
     const prevButton = this.elem.querySelector(`.swiper-left-2`) as HTMLElement;
 
     // console.log("prev button", prevButton)
     // console.log("next button", nextButton)
 
+
+// sse-swiper2x-mobile=mexico-city
+// sse-swiper2x-mobile=tijuana
+
+
+// Find all elements with the custom attribute `ssc-swiper2x-mobile`
+const mobileSwiperElements = document.querySelectorAll<HTMLElement>(`[sse-swiper2x-mobile]`);
+
+ console.log(mobileSwiperElements);
+
+// Iterate through each element and initialize Swiper
+mobileSwiperElements.forEach((elem) => {
+
+console.log(elem);
+
+  new Swiper(elem, { 
+//    modules: [ Autoplay ], 
+    spaceBetween: 10,
+    direction: 'horizontal',
+    loop: true,
+    loopAdditionalSlides: 2,
+    width: 120,
+    autoplay: {
+      delay: 4000, // 4000ms = 4 seconds
+//      disableOnInteraction: false, // Optional: keeps autoplay running even after user interaction
+    },
+  }).init();
+});
+
+
     // Create swiper 
     this.swiperInstance = new Swiper(this.swiperElement,   // '.swiper', 
       {
-      slidesPerView: 6, // 10
-      slidesPerGroup: 1, 
+//      slidesPerView: 'auto', // 10
+//      slidesPerGroup: 1, 
       spaceBetween: 10,
       direction: 'horizontal',
       loop: true,
       loopAdditionalSlides: 2,
-
+      width: 200, 
+      // breakpoints: {
+      //   // when window width is >= 320px
+      //   320: {
+      //     slidesPerView: 2,
+      //   },
+      //   // when window width is >= 480px
+      //   480: {
+      //     slidesPerView: 3,
+      //   },
+      //   // when window width is >= 640px
+      //   640: {
+      //     slidesPerView: 4,
+      //   }
+      // }
       // Navigation arrows
       // navigation: {
       //   nextEl: nextButton, // '.swiper-right-2',
@@ -92,7 +152,7 @@ export class AutoSwiper2xComponent {
     const lc: LottieComponentController = new LottieComponentController();
     lc.onLoopComplete = (lottieInstance) => { 
 
-      console.log("loop completed:", lottieInstance.name);
+//      console.log("loop completed:", lottieInstance.name);
 
       switch(lottieInstance.name) {
         case "mexico-city":
@@ -124,26 +184,27 @@ export class AutoSwiper2xComponent {
   private updateFeaturedSlide() {
     if (!this.swiperInstance) return;
 
-    const prevIndex =
-      this.swiperInstance.realIndex >= 1
+    const prevIndex = this.swiperInstance.realIndex >= 1
         ? this.swiperInstance.realIndex - 1
         : this.swiperInstance.slides.length - 1;
 
-//    console.log('slide changed', this.swiperInstance.realIndex, prevIndex);
-
-    const el = this.swiperInstance.slides[prevIndex] as HTMLElement;
+    // Get the previous image from the slider
+    // Important, the slides change position, however they have the logical index
+    // stored in an attribute
+    const wrapperEl = this.swiperInstance.wrapperEl;
+    const el = wrapperEl.querySelector(`[data-swiper-slide-index="${prevIndex}"]`) as HTMLElement;
     const imgElement = el.querySelector('img'); // Find the image element within the slide
     const imgSrc = imgElement ? imgElement.src : null; // Get the src attribute of the image, if the image element exists
 
-    // Find the clinic-gallery-badge div
-    const badgeElement = el.querySelector('.clinic-gallery-badge > div');
+    // Get the clinic-gallery-badge text
+    const badgeElement = el.querySelector(`[${SWIPER2X_LABEL}]`);
     const badgeText = badgeElement ? badgeElement.textContent : null; // Get the text content inside the badge, if it exists
 
+    // Set the image + text on the featured item 
     if (imgSrc) { 
       this.featuredImage.src = imgSrc; 
+      this.featuredImageLabel.textContent = badgeText; 
     } 
-
-    this.featuredImageLabel.textContent = badgeText; 
 
   }
 

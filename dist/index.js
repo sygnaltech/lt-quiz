@@ -25867,7 +25867,7 @@
         allSlidesSize += slideSizeValue + (spaceBetween || 0);
       });
       allSlidesSize -= spaceBetween;
-      const maxSnap = allSlidesSize - swiperSize;
+      const maxSnap = allSlidesSize > swiperSize ? allSlidesSize - swiperSize : 0;
       snapGrid = snapGrid.map((snap) => {
         if (snap <= 0)
           return -offsetBefore;
@@ -26718,7 +26718,9 @@
       direction = "prev";
     else
       direction = "reset";
-    if (rtl && -translate2 === swiper.translate || !rtl && translate2 === swiper.translate) {
+    const isVirtual = swiper.virtual && swiper.params.virtual.enabled;
+    const isInitialVirtual = isVirtual && initial;
+    if (!isInitialVirtual && (rtl && -translate2 === swiper.translate || !rtl && translate2 === swiper.translate)) {
       swiper.updateActiveIndex(slideIndex);
       if (params.autoHeight) {
         swiper.updateAutoHeight();
@@ -26737,7 +26739,6 @@
       const isH = swiper.isHorizontal();
       const t = rtl ? translate2 : -translate2;
       if (speed === 0) {
-        const isVirtual = swiper.virtual && swiper.params.virtual.enabled;
         if (isVirtual) {
           swiper.wrapperEl.style.scrollSnapType = "none";
           swiper._immediateVirtual = true;
@@ -29055,9 +29056,9 @@
   Swiper.use([Resize, Observer]);
 
   // src/components/auto-swiper-2x.ts
-  var SWIPER2X_FEATUREDIMAGE = "sse-swiper2x-image";
+  var SWIPER2X_FEATUREDIMAGE = "sse-swiper2x-featured-image";
+  var SWIPER2X_FEATUREDIMAGE_LABEL = "sse-swiper2x-featured-label";
   var SWIPER2X_SWIPER = "sse-swiper2x-swiper";
-  var SWIPER2X_AUTONEXTBUTTON = "sse-swiper2x-autobutton";
   var SWIPER2X_LABEL = "sse-swiper2x-label";
   var AutoSwiper2xComponent = class {
     constructor(elem2) {
@@ -29065,20 +29066,42 @@
     }
     init() {
       this.featuredImage = this.elem.querySelector(`[${SWIPER2X_FEATUREDIMAGE}]`);
+      if (!this.featuredImage) {
+        console.error("Unable to locate featured image");
+      }
+      this.featuredImageLabel = this.elem.querySelector(`[${SWIPER2X_FEATUREDIMAGE_LABEL}]`);
+      if (!this.featuredImage) {
+        console.error("Unable to locate featured image label");
+      }
       this.swiperElement = this.elem.querySelector(`[${SWIPER2X_SWIPER}]`);
-      this.featuredImageLabel = this.elem.querySelector(`[${SWIPER2X_LABEL}]`);
-      const autoNextButtonElement = this.elem.querySelector(`[${SWIPER2X_AUTONEXTBUTTON}]`);
+      if (!this.featuredImage) {
+        console.error("Unable to locate 2x swiper");
+      }
       const nextButton = this.elem.querySelector(`.swiper-right-2`);
       const prevButton = this.elem.querySelector(`.swiper-left-2`);
-      this.swiperInstance = new Swiper(
-        this.swiperElement,
-        {
-          slidesPerView: 6,
-          slidesPerGroup: 1,
+      const mobileSwiperElements = document.querySelectorAll(`[sse-swiper2x-mobile]`);
+      console.log(mobileSwiperElements);
+      mobileSwiperElements.forEach((elem2) => {
+        console.log(elem2);
+        new Swiper(elem2, {
           spaceBetween: 10,
           direction: "horizontal",
           loop: true,
-          loopAdditionalSlides: 2
+          loopAdditionalSlides: 2,
+          width: 120,
+          autoplay: {
+            delay: 4e3
+          }
+        }).init();
+      });
+      this.swiperInstance = new Swiper(
+        this.swiperElement,
+        {
+          spaceBetween: 10,
+          direction: "horizontal",
+          loop: true,
+          loopAdditionalSlides: 2,
+          width: 200
         }
       );
       this.swiperInstance.on("slideChange", () => {
@@ -29099,7 +29122,6 @@
       const lc = new LottieComponentController();
       lc.onLoopComplete = (lottieInstance) => {
         var _a, _b, _c, _d;
-        console.log("loop completed:", lottieInstance.name);
         switch (lottieInstance.name) {
           case "mexico-city":
             (_a = this.swiperInstance) == null ? void 0 : _a.slideNext();
@@ -29127,15 +29149,16 @@
       if (!this.swiperInstance)
         return;
       const prevIndex = this.swiperInstance.realIndex >= 1 ? this.swiperInstance.realIndex - 1 : this.swiperInstance.slides.length - 1;
-      const el = this.swiperInstance.slides[prevIndex];
+      const wrapperEl = this.swiperInstance.wrapperEl;
+      const el = wrapperEl.querySelector(`[data-swiper-slide-index="${prevIndex}"]`);
       const imgElement = el.querySelector("img");
       const imgSrc = imgElement ? imgElement.src : null;
-      const badgeElement = el.querySelector(".clinic-gallery-badge > div");
+      const badgeElement = el.querySelector(`[${SWIPER2X_LABEL}]`);
       const badgeText = badgeElement ? badgeElement.textContent : null;
       if (imgSrc) {
         this.featuredImage.src = imgSrc;
+        this.featuredImageLabel.textContent = badgeText;
       }
-      this.featuredImageLabel.textContent = badgeText;
     }
   };
 

@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/sygnaltech/webflow-dev-template#readme",
   "devDependencies": {
+    "@types/swiper": "^6.0.0",
     "esbuild": "^0.15.14",
     "prettier": "^2.7.1",
     "serve": "^14.1.1",
@@ -38,6 +39,6 @@
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
     "lottie-web": "^5.12.2",
-    "swiper": "^11.1.9"
+    "swiper": "^11.1.12"
   }
 }
