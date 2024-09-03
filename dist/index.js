@@ -23819,7 +23819,7 @@
   });
 
   // src/version.ts
-  var VERSION = "0.1.10";
+  var VERSION = "0.1.11";
 
   // src/page/home.ts
   var HomePage = class {
