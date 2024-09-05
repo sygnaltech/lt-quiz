@@ -133,20 +133,20 @@ export class AutoSwiper2xComponent {
       direction: 'horizontal',
       loop: true,
       loopAdditionalSlides: 2,
-      width: 200, 
+      width: 200, // mobile portrait
 
       breakpoints: {
         // when window width is >= 480px (Webflow medium screens)
         480: {
-          width: 220, 
+          width: 220,  // mobile landscape
         },
         // when window width is >= 768px (Webflow tablet screens)
         768: {
-          width: 240, 
+          width: 240, // tablet
         },
         // when window width is >= 992px (Webflow desktop screens)
         992: {
-          width: 260, 
+          width: 260, // desktop
         },
       }
       // Navigation arrows
