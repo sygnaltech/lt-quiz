@@ -16,6 +16,7 @@ import { initSSE } from "@sygnal/sse";
 import { QuizComponent } from "./components/quiz";
 import { PatientsJourneyComponent } from "./components/patient-journey";
 import { AutoSwiper2xComponent } from "./components/auto-swiper-2x";
+import { ComponentManager } from "./components/component-manager";
 
 interface SiteGlobalDataType {
     // Define properties and their types for SiteDataType
@@ -53,10 +54,12 @@ declare global {
         sa5: any;
 //        sa5: Array<[string, (accordion: any, index: number) => void]>;
 
-        components: []
+        componentManager: ComponentManager;
 
     }
 }
+
+window.componentManager = new ComponentManager();
 
 // Init SSE Engine
 initSSE();

@@ -46,11 +46,15 @@ export class AutoSwiper2xComponent {
   swiperElement!: HTMLElement;
   featuredImageLabel!: HTMLElement;
 
+  lottieController!: LottieComponentController; 
+
   constructor(elem: HTMLElement) {
     this.elem = elem; 
 
     if(this.elem.hasAttribute(COMPONENT_NAME))
       this.name = this.elem.getAttribute(COMPONENT_NAME) || "";
+
+    window.componentManager.registerComponent('AutoSwiper2x', this);
   }
 
 
@@ -106,6 +110,20 @@ export class AutoSwiper2xComponent {
 // });
 
 
+    // Destroy existing Swiper instance if any
+    if(this.swiperInstance) {
+
+      this.swiperInstance.off('slideChange');
+      if (nextButton) {
+        nextButton.removeEventListener('click', this.nextSlide);
+      }
+      if (prevButton) {
+        prevButton.removeEventListener('click', this.prevSlide);
+      }
+
+      this.swiperInstance.destroy(true, true);
+    }
+
     // Create swiper 
     this.swiperInstance = new Swiper(this.swiperElement,   // '.swiper', 
       {
@@ -143,64 +161,62 @@ export class AutoSwiper2xComponent {
       this.updateFeaturedSlide();
     });
 
+
+
+    // Reattach button event listeners
     if (nextButton) {
-      nextButton.addEventListener('click', () => {
-          this.swiperInstance?.slideNext(); // Move to the next slide
-      });
-  }
-  
-  if (prevButton) {
-      prevButton.addEventListener('click', () => {
-          this.swiperInstance?.slidePrev(); // Move to the previous slide
-      });
-  }
+      nextButton.addEventListener('click', this.nextSlide);
+    }
+    if (prevButton) {
+      prevButton.addEventListener('click', this.prevSlide);
+    }
+
     // Setup the Lottie controller
     // register a loopComplete event 
-    const lc: LottieComponentController = new LottieComponentController();
-    lc.onLoopComplete = (lottieInstance) => { 
+    if(!this.lottieController) {
 
-//      console.log("loop completed:", lottieInstance.name);
+        this.lottieController = new LottieComponentController();
+        this.lottieController.onLoopComplete = (lottieInstance) => { 
 
-      // can be mexico-city or tijuana
+          // can be mexico-city or tijuana
 
-      if(lottieInstance.name == this.name) { 
+          if(lottieInstance.name == this.name) { 
 
-          this.swiperInstance?.slideNext(); 
-          this.swiperInstance?.update();
-          this.updateFeaturedSlide(); 
-          setTimeout(() => {
-            this.swiperInstance?.update();
-          }, 100); // Delay update to ensure the tab is fully visible
+              this.swiperInstance?.slideNext(); 
+              this.swiperInstance?.update();
+              this.updateFeaturedSlide(); 
+              setTimeout(() => {
+                this.swiperInstance?.update();
+              }, 100); // Delay update to ensure the tab is fully visible
 
+          }
+
+        }
+        this.lottieController.init(); 
       }
 
-//       switch(lottieInstance.name) {
-//         case "mexico-city":
-
-// //          this.swiperInstance?.slideNext(); 
-// //          this.swiperInstance?.update();
-//           this.updateFeaturedSlide(); 
-//           setTimeout(() => {
-//             this.swiperInstance?.update();
-//         }, 100); // Delay update to ensure the tab is fully visible
-
-//           break;
-//         case "tijuana":
-
-
-//           this.swiperInstance?.slideNext(); 
-//           this.swiperInstance?.update();
-//           this.updateFeaturedSlide(); 
-//           setTimeout(() => {
-//             this.swiperInstance?.update();
-//         }, 100); // Delay update to ensure the tab is fully visible
-//           break;
-//       }
-
-    }
-    lc.init(); 
-
   }
+
+  nextSlide = () => {
+    this.swiperInstance?.slideNext(); // Move to the next slide
+  };
+  prevSlide = () => {
+    this.swiperInstance?.slidePrev(); // Move to the previous slide
+  };
+
+
+  reinit() {
+
+    // Wait for the swiper to redraw and then reInit
+    // done on tab change  
+    setTimeout(() => {
+      console.log("updating", this.name); 
+
+      this.init();
+
+    }, 100); // 500ms delay
+  }
+  
 
   private updateFeaturedSlide() {
     if (!this.swiperInstance) return;

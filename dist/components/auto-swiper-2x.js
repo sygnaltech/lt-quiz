@@ -20672,9 +20672,18 @@
   var AutoSwiper2xComponent = class {
     constructor(elem2) {
       this.name = "";
+      this.nextSlide = () => {
+        var _a;
+        (_a = this.swiperInstance) == null ? void 0 : _a.slideNext();
+      };
+      this.prevSlide = () => {
+        var _a;
+        (_a = this.swiperInstance) == null ? void 0 : _a.slidePrev();
+      };
       this.elem = elem2;
       if (this.elem.hasAttribute(COMPONENT_NAME))
         this.name = this.elem.getAttribute(COMPONENT_NAME) || "";
+      window.componentManager.registerComponent("AutoSwiper2x", this);
     }
     init() {
       this.featuredImage = this.elem.querySelector(`[${SWIPER2X_FEATUREDIMAGE}]`);
@@ -20691,6 +20700,16 @@
       }
       const nextButton = this.elem.querySelector(`.swiper-right-2`);
       const prevButton = this.elem.querySelector(`.swiper-left-2`);
+      if (this.swiperInstance) {
+        this.swiperInstance.off("slideChange");
+        if (nextButton) {
+          nextButton.removeEventListener("click", this.nextSlide);
+        }
+        if (prevButton) {
+          prevButton.removeEventListener("click", this.prevSlide);
+        }
+        this.swiperInstance.destroy(true, true);
+      }
       this.swiperInstance = new Swiper(
         this.swiperElement,
         {
@@ -20716,31 +20735,33 @@
         this.updateFeaturedSlide();
       });
       if (nextButton) {
-        nextButton.addEventListener("click", () => {
-          var _a;
-          (_a = this.swiperInstance) == null ? void 0 : _a.slideNext();
-        });
+        nextButton.addEventListener("click", this.nextSlide);
       }
       if (prevButton) {
-        prevButton.addEventListener("click", () => {
-          var _a;
-          (_a = this.swiperInstance) == null ? void 0 : _a.slidePrev();
-        });
+        prevButton.addEventListener("click", this.prevSlide);
       }
-      const lc = new LottieComponentController();
-      lc.onLoopComplete = (lottieInstance) => {
-        var _a, _b;
-        if (lottieInstance.name == this.name) {
-          (_a = this.swiperInstance) == null ? void 0 : _a.slideNext();
-          (_b = this.swiperInstance) == null ? void 0 : _b.update();
-          this.updateFeaturedSlide();
-          setTimeout(() => {
-            var _a2;
-            (_a2 = this.swiperInstance) == null ? void 0 : _a2.update();
-          }, 100);
-        }
-      };
-      lc.init();
+      if (!this.lottieController) {
+        this.lottieController = new LottieComponentController();
+        this.lottieController.onLoopComplete = (lottieInstance) => {
+          var _a, _b;
+          if (lottieInstance.name == this.name) {
+            (_a = this.swiperInstance) == null ? void 0 : _a.slideNext();
+            (_b = this.swiperInstance) == null ? void 0 : _b.update();
+            this.updateFeaturedSlide();
+            setTimeout(() => {
+              var _a2;
+              (_a2 = this.swiperInstance) == null ? void 0 : _a2.update();
+            }, 100);
+          }
+        };
+        this.lottieController.init();
+      }
+    }
+    reinit() {
+      setTimeout(() => {
+        console.log("updating", this.name);
+        this.init();
+      }, 100);
     }
     updateFeaturedSlide() {
       if (!this.swiperInstance)

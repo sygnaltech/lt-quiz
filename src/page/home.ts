@@ -4,6 +4,7 @@
  */
 
 import { IRouteHandler } from "@sygnal/sse";
+import { AutoSwiper2xComponent } from "../components/auto-swiper-2x";
 // import { AutoSwiper2xComponent } from "../components/auto-swiper-2x";
  
 
@@ -44,6 +45,13 @@ console.log("tabchanged", tab, index)
 // 0 Mexico City
 // 1 Tijuana
 
+const swiper2x = window.componentManager.getComponentsByType<AutoSwiper2xComponent>('AutoSwiper2x');
+swiper2x.forEach(component => {
+
+  component.reinit(); 
+
+  console.log("swiper", component.name); // Use each component instance
+});
 
 
 

@@ -17,6 +17,11 @@
         "tabChanged",
         (tab, index) => {
           console.log("tabchanged", tab, index);
+          const swiper2x = window.componentManager.getComponentsByType("AutoSwiper2x");
+          swiper2x.forEach((component) => {
+            component.reinit();
+            console.log("swiper", component.name);
+          });
         }
       ]);
     }
