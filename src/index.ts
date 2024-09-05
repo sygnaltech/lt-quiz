@@ -53,6 +53,8 @@ declare global {
         sa5: any;
 //        sa5: Array<[string, (accordion: any, index: number) => void]>;
 
+        components: []
+
     }
 }
 
@@ -79,12 +81,12 @@ const exec = () => {
     components.forEach(element=> {
         // Get the value of the SSE-component attribute
         const componentValue = element.getAttribute('sse-component');
-        
+         
         if (componentValue) {
             // Run a switch statement based on the attribute value
             switch (componentValue) {
                 case 'quiz':
-
+ 
                     (new QuizComponent(element)).exec();
 
                     break;

@@ -25,6 +25,8 @@ import { TimedLottieComponent } from '../elements/timed-lottie';
 import { LottieComponentController } from '../elements/lottie';
 
 
+const COMPONENT_NAME = "sse-component-name"; 
+
 const SWIPER2X = "sse-swiper2x";
 const SWIPER2X_FEATUREDIMAGE = "sse-swiper2x-featured-image";
 const SWIPER2X_FEATUREDIMAGE_LABEL = "sse-swiper2x-featured-label";
@@ -38,6 +40,7 @@ export class AutoSwiper2xComponent {
   swiperInstance: Swiper | undefined;
   autoNextButton!: TimedLottieComponent; 
   elem: HTMLElement; 
+  name: string = "";
 
   featuredImage!: HTMLImageElement;
   swiperElement!: HTMLElement;
@@ -45,11 +48,14 @@ export class AutoSwiper2xComponent {
 
   constructor(elem: HTMLElement) {
     this.elem = elem; 
+
+    if(this.elem.hasAttribute(COMPONENT_NAME))
+      this.name = this.elem.getAttribute(COMPONENT_NAME) || "";
   }
 
 
   init() { 
-
+// sse-component-name
     // Get the parts of the component 
     this.featuredImage = this.elem.querySelector(`[${SWIPER2X_FEATUREDIMAGE}]`) as HTMLImageElement;
     if(!this.featuredImage) {
@@ -75,29 +81,29 @@ export class AutoSwiper2xComponent {
 // sse-swiper2x-mobile=tijuana
 
 
-// Find all elements with the custom attribute `ssc-swiper2x-mobile`
-const mobileSwiperElements = document.querySelectorAll<HTMLElement>(`[sse-swiper2x-mobile]`);
+// // Find all elements with the custom attribute `ssc-swiper2x-mobile`
+// const mobileSwiperElements = document.querySelectorAll<HTMLElement>(`[sse-swiper2x-mobile]`);
 
- console.log(mobileSwiperElements);
+//  console.log(mobileSwiperElements);
 
-// Iterate through each element and initialize Swiper
-mobileSwiperElements.forEach((elem) => {
+// // Iterate through each element and initialize Swiper
+// mobileSwiperElements.forEach((elem) => {
 
-console.log(elem);
+// console.log(elem);
 
-  new Swiper(elem, { 
-//    modules: [ Autoplay ], 
-    spaceBetween: 10,
-    direction: 'horizontal',
-    loop: true,
-    loopAdditionalSlides: 2,
-    width: 120,
-    autoplay: {
-      delay: 4000, // 4000ms = 4 seconds
-//      disableOnInteraction: false, // Optional: keeps autoplay running even after user interaction
-    },
-  }).init();
-});
+//   new Swiper(elem, { 
+// //    modules: [ Autoplay ], 
+//     spaceBetween: 10,
+//     direction: 'horizontal',
+//     loop: true,
+//     loopAdditionalSlides: 2,
+//     width: 120,
+//     autoplay: {
+//       delay: 4000, // 4000ms = 4 seconds
+// //      disableOnInteraction: false, // Optional: keeps autoplay running even after user interaction
+//     },
+//   }).init();
+// });
 
 
     // Create swiper 
@@ -110,20 +116,21 @@ console.log(elem);
       loop: true,
       loopAdditionalSlides: 2,
       width: 200, 
-      // breakpoints: {
-      //   // when window width is >= 320px
-      //   320: {
-      //     slidesPerView: 2,
-      //   },
-      //   // when window width is >= 480px
-      //   480: {
-      //     slidesPerView: 3,
-      //   },
-      //   // when window width is >= 640px
-      //   640: {
-      //     slidesPerView: 4,
-      //   }
-      // }
+
+      breakpoints: {
+        // when window width is >= 480px (Webflow medium screens)
+        480: {
+          width: 220, 
+        },
+        // when window width is >= 768px (Webflow tablet screens)
+        768: {
+          width: 240, 
+        },
+        // when window width is >= 992px (Webflow desktop screens)
+        992: {
+          width: 260, 
+        },
+      }
       // Navigation arrows
       // navigation: {
       //   nextEl: nextButton, // '.swiper-right-2',
@@ -154,27 +161,41 @@ console.log(elem);
 
 //      console.log("loop completed:", lottieInstance.name);
 
-      switch(lottieInstance.name) {
-        case "mexico-city":
+      // can be mexico-city or tijuana
+
+      if(lottieInstance.name == this.name) { 
 
           this.swiperInstance?.slideNext(); 
           this.swiperInstance?.update();
           this.updateFeaturedSlide(); 
           setTimeout(() => {
             this.swiperInstance?.update();
-        }, 100); // Delay update to ensure the tab is fully visible
+          }, 100); // Delay update to ensure the tab is fully visible
 
-          break;
-        case "tijuana":
-
-          this.swiperInstance?.slideNext(); 
-          this.swiperInstance?.update();
-          this.updateFeaturedSlide(); 
-          setTimeout(() => {
-            this.swiperInstance?.update();
-        }, 100); // Delay update to ensure the tab is fully visible
-          break;
       }
+
+//       switch(lottieInstance.name) {
+//         case "mexico-city":
+
+// //          this.swiperInstance?.slideNext(); 
+// //          this.swiperInstance?.update();
+//           this.updateFeaturedSlide(); 
+//           setTimeout(() => {
+//             this.swiperInstance?.update();
+//         }, 100); // Delay update to ensure the tab is fully visible
+
+//           break;
+//         case "tijuana":
+
+
+//           this.swiperInstance?.slideNext(); 
+//           this.swiperInstance?.update();
+//           this.updateFeaturedSlide(); 
+//           setTimeout(() => {
+//             this.swiperInstance?.update();
+//         }, 100); // Delay update to ensure the tab is fully visible
+//           break;
+//       }
 
     }
     lc.init(); 

@@ -20664,13 +20664,17 @@
   };
 
   // src/components/auto-swiper-2x.ts
+  var COMPONENT_NAME = "sse-component-name";
   var SWIPER2X_FEATUREDIMAGE = "sse-swiper2x-featured-image";
   var SWIPER2X_FEATUREDIMAGE_LABEL = "sse-swiper2x-featured-label";
   var SWIPER2X_SWIPER = "sse-swiper2x-swiper";
   var SWIPER2X_LABEL = "sse-swiper2x-label";
   var AutoSwiper2xComponent = class {
     constructor(elem2) {
+      this.name = "";
       this.elem = elem2;
+      if (this.elem.hasAttribute(COMPONENT_NAME))
+        this.name = this.elem.getAttribute(COMPONENT_NAME) || "";
     }
     init() {
       this.featuredImage = this.elem.querySelector(`[${SWIPER2X_FEATUREDIMAGE}]`);
@@ -20687,21 +20691,6 @@
       }
       const nextButton = this.elem.querySelector(`.swiper-right-2`);
       const prevButton = this.elem.querySelector(`.swiper-left-2`);
-      const mobileSwiperElements = document.querySelectorAll(`[sse-swiper2x-mobile]`);
-      console.log(mobileSwiperElements);
-      mobileSwiperElements.forEach((elem2) => {
-        console.log(elem2);
-        new Swiper(elem2, {
-          spaceBetween: 10,
-          direction: "horizontal",
-          loop: true,
-          loopAdditionalSlides: 2,
-          width: 120,
-          autoplay: {
-            delay: 4e3
-          }
-        }).init();
-      });
       this.swiperInstance = new Swiper(
         this.swiperElement,
         {
@@ -20709,7 +20698,18 @@
           direction: "horizontal",
           loop: true,
           loopAdditionalSlides: 2,
-          width: 200
+          width: 200,
+          breakpoints: {
+            480: {
+              width: 220
+            },
+            768: {
+              width: 240
+            },
+            992: {
+              width: 260
+            }
+          }
         }
       );
       this.swiperInstance.on("slideChange", () => {
@@ -20729,26 +20729,15 @@
       }
       const lc = new LottieComponentController();
       lc.onLoopComplete = (lottieInstance) => {
-        var _a, _b, _c, _d;
-        switch (lottieInstance.name) {
-          case "mexico-city":
-            (_a = this.swiperInstance) == null ? void 0 : _a.slideNext();
-            (_b = this.swiperInstance) == null ? void 0 : _b.update();
-            this.updateFeaturedSlide();
-            setTimeout(() => {
-              var _a2;
-              (_a2 = this.swiperInstance) == null ? void 0 : _a2.update();
-            }, 100);
-            break;
-          case "tijuana":
-            (_c = this.swiperInstance) == null ? void 0 : _c.slideNext();
-            (_d = this.swiperInstance) == null ? void 0 : _d.update();
-            this.updateFeaturedSlide();
-            setTimeout(() => {
-              var _a2;
-              (_a2 = this.swiperInstance) == null ? void 0 : _a2.update();
-            }, 100);
-            break;
+        var _a, _b;
+        if (lottieInstance.name == this.name) {
+          (_a = this.swiperInstance) == null ? void 0 : _a.slideNext();
+          (_b = this.swiperInstance) == null ? void 0 : _b.update();
+          this.updateFeaturedSlide();
+          setTimeout(() => {
+            var _a2;
+            (_a2 = this.swiperInstance) == null ? void 0 : _a2.update();
+          }, 100);
         }
       };
       lc.init();
