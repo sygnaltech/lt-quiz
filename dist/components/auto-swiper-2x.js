@@ -20713,22 +20713,11 @@
       this.swiperInstance = new Swiper(
         this.swiperElement,
         {
-          spaceBetween: 10,
+          slidesPerView: "auto",
           direction: "horizontal",
           loop: true,
           loopAdditionalSlides: 2,
-          width: 200,
-          breakpoints: {
-            480: {
-              width: 220
-            },
-            768: {
-              width: 240
-            },
-            992: {
-              width: 260
-            }
-          }
+          centeredSlides: true
         }
       );
       this.swiperInstance.on("slideChange", () => {

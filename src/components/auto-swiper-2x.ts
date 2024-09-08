@@ -127,28 +127,29 @@ export class AutoSwiper2xComponent {
     // Create swiper 
     this.swiperInstance = new Swiper(this.swiperElement,   // '.swiper', 
       {
-//      slidesPerView: 'auto', // 10
+      slidesPerView: 'auto', // 10
 //      slidesPerGroup: 1, 
-      spaceBetween: 10,
+//      spaceBetween: 10,
       direction: 'horizontal',
       loop: true,
       loopAdditionalSlides: 2,
-      width: 200, // mobile portrait
+//      width: 200, // mobile portrait
+      centeredSlides: true,
 
-      breakpoints: {
-        // when window width is >= 480px (Webflow medium screens)
-        480: {
-          width: 220,  // mobile landscape
-        },
-        // when window width is >= 768px (Webflow tablet screens)
-        768: {
-          width: 240, // tablet
-        },
-        // when window width is >= 992px (Webflow desktop screens)
-        992: {
-          width: 260, // desktop
-        },
-      }
+      // breakpoints: {
+      //   // when window width is >= 480px (Webflow medium screens)
+      //   480: {
+      //     width: 220,  // mobile landscape
+      //   },
+      //   // when window width is >= 768px (Webflow tablet screens)
+      //   768: {
+      //     width: 240, // tablet
+      //   },
+      //   // when window width is >= 992px (Webflow desktop screens)
+      //   992: {
+      //     width: 260, // desktop
+      //   },
+      // }
       // Navigation arrows
       // navigation: {
       //   nextEl: nextButton, // '.swiper-right-2',
